@@ -2,8 +2,8 @@
   <el-card class="order-container">
     <template #header>
       <div class="search-filter">
-        <el-row type="flex" :gutter="30">
-          <el-col :span="5">
+        <el-row type="flex" :gutter="10">
+          <el-col :span="4">
             <span class="search-lable">设备状态</span>
             <el-select v-model="queryParams.status" size="small" style="width: 100%;">
               <el-option
@@ -14,14 +14,14 @@
               />
             </el-select>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="4">
             <span class="search-lable">设备序列号</span>
             <el-input v-model="queryParams.device_no" placeholder="请输入序列号" size="small" />
           </el-col>
           <el-col :span="6">
             <span class="search-lable">安装时间</span>
             <el-date-picker
-              v-model="queryParams.InstTime"
+              v-model="queryParams.inst_time"
               type="daterange"
               range-separator="至"
               start-placeholder="开始日期"
@@ -30,17 +30,33 @@
               style="width: 100%;"
             ></el-date-picker>
           </el-col>
-          <el-col :span="6">
-            <span class="search-lable">省市区</span>
-            <ProvincesCascader style="width: 100%;" size="small" />
+          <el-col :span="4">
+            <span class="search-lable">地区</span>
+            <el-select v-model="queryParams.ins_provice" placeholder="请选择省" @change="changeProvice">
+              <el-option
+                v-for="pItem in proviceData"
+                :key="pItem.value"
+                :label="pItem.label"
+                :value="pItem.value"
+              ></el-option>
+            </el-select>
           </el-col>
-          <el-col :span="4" class="m-t-15">
+          <el-col :span="3">
+            <el-select v-model="queryParams.ins_country" placeholder="请选择市">
+              <el-option
+                v-for="cItem in cityData"
+                :key="cItem.value"
+                :label="cItem.label"
+                :value="cItem.value"
+              ></el-option>
+            </el-select>
+          </el-col>
+          <el-col :span="3" >
             <el-button type="primary" @click="querySearchData()" size="small">查询</el-button>
             <el-button @click="handleReset()" size="small">重置</el-button>
           </el-col>
         </el-row>
       </div>
-
       <el-button @click="handleAdd()" type="primary" icon="el-icon-plus" size="small">新建</el-button>
       <el-button
         @click="querySearchData('export')"
@@ -57,34 +73,28 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column prop="DeviceNo" label="设备序列号"></el-table-column>
-
+      <el-table-column prop="deviceNo" label="设备序列号"></el-table-column>
       <el-table-column prop="ValidTime" label="有效期">
         <template #default="scope">
           <span style="margin-left: 10px">{{formatDay(scope.row.ValidTime) }}</span>
         </template>
       </el-table-column>
-
       <el-table-column prop="orderStatus" label="状态">
         <template #default="scope">
           <span style="margin-left: 10px">{{scope.row.status === 1 ? '有效' : '无效'}}</span>
         </template>
       </el-table-column>
-
-      <el-table-column prop="InstTime" label="安装时间">
+      <el-table-column prop="instTime" label="安装时间">
         <template #default="scope">
           <span style="margin-left: 10px">{{formatDay(scope.row.InstTime) }}</span>
         </template>
       </el-table-column>
-
-      <el-table-column prop="Customername" label="公司名称"></el-table-column>
-
+      <el-table-column prop="customerName" label="公司名称"></el-table-column>
       <el-table-column label="地址">
         <template #default="scope">
           <span style="margin-left: 10px">{{getCompany(scope.row) }}</span>
         </template>
       </el-table-column>
-
       <el-table-column label="操作">
         <template #default="scope">
           <el-button
@@ -115,15 +125,16 @@
 import { onMounted, reactive, ref, toRefs } from "vue";
 import dayjs from "dayjs";
 import { useRouter } from "vue-router";
-import DeviceDialog from "./modules/DeviceDialog.vue";
+// import DeviceDialog from "./modules/DeviceDialog.vue";
 import ProvincesCascader from "/@/components/ProvincesCascader/Index.vue";
 import * as Http from "/@/api/admin";
 import { ElMessageBox, ElMessage } from "element-plus";
+import regionData from "/@/components/ProvincesCascader/region.json";
 
 export default {
   name: "DeviceManage",
   components: {
-    DeviceDialog,
+    // DeviceDialog,
     ProvincesCascader
   },
   setup() {
@@ -141,8 +152,13 @@ export default {
       queryParams: {
         status: "", // 设备状态
         device_no: "",
-        instTime: "" // 安装时间
+        inst_time: "", // 安装时间
+        ins_provice: "",
+        ins_country: "",
+        ins_address: ""
       },
+      proviceData: [],
+      cityData: [],
       options: [
         {
           value: "",
@@ -163,26 +179,40 @@ export default {
     const router = useRouter();
 
     onMounted(() => {
+      console.log(dayjs("2021-08-22T00:00:00+08:00").valueOf());
+      state.proviceData = regionData.map(x => {
+        return {
+          value: x.value,
+          label: x.label
+        };
+      });
       queryData();
     });
-
+    const changeProvice = val => {
+      state.queryParams.ins_country = "";
+      const cityData = regionData.find(x => x.value == val);
+      state.cityData = (cityData && cityData.children) || [];
+    };
     // 新增
     const handleAdd = item => {
       if (item?.DeviceNo) {
-        router.push(`/add-device/${item.DeviceNo}`);
+        router.push(`/add-device/?id=${item.DeviceNo}`);
       } else {
         router.push("/add-device");
       }
     };
-
+    // 表单搜索
     const querySearchData = key => {
       const filters = [];
       for (const key in state.queryParams) {
         if (state.queryParams[key]) {
           filters.push({
             field: key,
-            value: [state.queryParams[key]],
-            condition: "equal"
+            value:
+              key === "inst_time"
+                ? state.queryParams[key]
+                : [state.queryParams[key]],
+            condition: key === "inst_time" ? "time_between" : "equal"
           });
         }
       }
@@ -220,13 +250,21 @@ export default {
     const handleSelectionChange = val => {
       state.multipleSelection = val;
     };
+
     const formatDay = val => {
       return dayjs(val).format("YYYY-MM-DD HH:mm:ss");
     };
-    const getCompany = item => {
-      return item.InsProvice + item.InsCountry + item.InsAddress;
-    };
 
+    const getCompany = item => {
+      return item.insProvice + item.insCountry + item.insAddress;
+    };
+    // 地址选择
+    const addressChange = obj => {
+      state.queryParams.ins_provice = obj?.[0];
+      state.queryParams.ins_country = obj?.[1];
+      state.queryParams.ins_address = obj?.[2];
+    };
+    // 操作
     const operation = item => {
       ElMessageBox({
         title: "提示",
@@ -255,7 +293,7 @@ export default {
         })
         .catch(() => {});
     };
-
+    // 导出
     const exportFil = filters => {
       const params = {
         page: state.currentPage,
@@ -281,6 +319,7 @@ export default {
           ElMessage.info("导出失败!");
         });
     };
+
     return {
       ...toRefs(state),
       handleAdd,
@@ -290,7 +329,9 @@ export default {
       getCompany,
       operation,
       querySearchData,
-      exportFil
+      changeProvice,
+      exportFil,
+      addressChange
     };
   }
 };

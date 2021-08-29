@@ -24,3 +24,7 @@ export function changeDeviceStatus (params) {
 export function getDeviceList(params) {
   return request.postAjax('/admin/search/devices', params, true)
 }
+
+export function getExportFile(params) {
+  return request.postAjax('/admin/export/devices', params, true)
+}

@@ -6,8 +6,12 @@
           预略科技
         </div>
 
-        <el-menu class="menu-nav" mode="horizontal" router>
-          <el-menu-item index="/device" class="is-current">设备管理</el-menu-item>
+        <el-menu class="menu-nav"
+          mode="horizontal" 
+          router 
+        >
+          <el-menu-item index="/device">设备管理</el-menu-item>
+          <el-menu-item index="/feedback">意见反馈</el-menu-item>
         </el-menu>
       </div>
 
@@ -34,8 +38,8 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
-import { useRouter } from 'vue-router'
+import { defineComponent, ref, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router'
 import { localRemove, localGet } from '/@/utils'
 
 export default defineComponent({
@@ -43,9 +47,10 @@ export default defineComponent({
   setup() {
     const activeIndex = ref('1');
     const router = useRouter();
-    const userName = localGet('username') || ''
+    const route = useRoute();
+    const userName = localGet('username') || '';
+    const path = null;
     const handleDropdown = (command) => {
-      console.log(command)
       switch (command) {
         case 'logout':
           localRemove('token')
@@ -55,8 +60,10 @@ export default defineComponent({
           break;
       }
     };
+
     return {
       userName,
+      path,
       activeIndex,
       handleDropdown
     };
@@ -100,7 +107,7 @@ export default defineComponent({
           padding: 0 18px;
           color: #bfcbd9;
 
-          &.is-current {
+          &.is-current, &:hover, &:focus {
             border-bottom: 4px solid #409EFF !important;
             color: #fff;
             background: #1b1e23;

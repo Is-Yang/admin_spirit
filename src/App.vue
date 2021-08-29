@@ -43,7 +43,6 @@ export default {
           // 如果没有，则跳至登录页面
           next({ path: '/login' })
         } else {
-          console.log(to)
           // 否则继续执行
           next()
         }

@@ -20,6 +20,12 @@ const router = createRouter({
         showMenu: true
       },
       component: () => import('../views/device/DeviceManage.vue')
+    }, {
+      path: '/feedback',
+      meta: {
+        showMenu: true
+      },
+      component: () => import('../views/feedback/FeedbackList.vue')
     }
   ]
 })

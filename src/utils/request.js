@@ -25,8 +25,16 @@ http.interceptors.request.use(
 // 添加一个响应拦截器
 http.interceptors.response.use(
   response => {
-    const { code, message} = response.data
-    if (code != 0) {
+    const { code, message} = response.data;
+    if (code == 4200) {
+      ElMessageBox.confirm('登录已失效，需重新登录', '提示', { 
+        type: 'warning',
+        confirmButtonText: '确定',
+      }).then(() => {
+        localStorage.removeItem('token');
+        router.push('/login');
+      })
+    } else if (code != 0) {
       ElMessage({
         type: 'error',
         message: message
@@ -43,8 +51,7 @@ http.interceptors.response.use(
             type: 'warning',
             confirmButtonText: '确定',
           }).then(() => {
-            store.commit('SAVE_USER');
-            localStorage.removeItem('userInfo');
+            localStorage.removeItem('token');
             router.push('/login');
             window.location.reload();
           }).catch(() => {

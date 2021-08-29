@@ -32,7 +32,7 @@
           </el-col>
           <el-col :span="4">
             <span class="search-lable">地区</span>
-            <el-select v-model="queryParams.ins_provice" placeholder="请选择省" @change="changeProvice">
+            <el-select v-model="queryParams.ins_provice" placeholder="请选择省" @change="changeProvice" size="small">
               <el-option
                 v-for="pItem in proviceData"
                 :key="pItem.value"
@@ -42,7 +42,7 @@
             </el-select>
           </el-col>
           <el-col :span="3">
-            <el-select v-model="queryParams.ins_country" placeholder="请选择市">
+            <el-select v-model="queryParams.ins_country" placeholder="请选择市" size="small">
               <el-option
                 v-for="cItem in cityData"
                 :key="cItem.value"
@@ -51,7 +51,7 @@
               ></el-option>
             </el-select>
           </el-col>
-          <el-col :span="3" >
+          <el-col :span="3">
             <el-button type="primary" @click="querySearchData()" size="small">查询</el-button>
             <el-button @click="handleReset()" size="small">重置</el-button>
           </el-col>
@@ -86,7 +86,7 @@
       </el-table-column>
       <el-table-column prop="instTime" label="安装时间">
         <template #default="scope">
-          <span style="margin-left: 10px">{{formatDay(scope.row.InstTime) }}</span>
+          <span style="margin-left: 10px">{{formatDay(scope.row.instTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="customerName" label="公司名称"></el-table-column>
@@ -195,8 +195,8 @@ export default {
     };
     // 新增
     const handleAdd = item => {
-      if (item?.DeviceNo) {
-        router.push(`/add-device/?id=${item.DeviceNo}`);
+      if (item?.deviceNo) {
+        router.push(`/add-device?id=${item.deviceNo}`);
       } else {
         router.push("/add-device");
       }

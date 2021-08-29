@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from "vue-router";
 
 const router = createRouter({
   history: createWebHashHistory(), // hash模式：createWebHashHistory，history模式：createWebHistory
@@ -21,6 +21,13 @@ const router = createRouter({
       },
       component: () => import('../views/device/DeviceManage.vue')
     }, {
+      path: "/add-device",
+      meta: {
+          // showMenu: true,
+      },
+      component: () =>
+          import ("../views/device/DeviceAdd.vue"),
+    }, {
       path: '/feedback',
       meta: {
         showMenu: true
@@ -28,6 +35,6 @@ const router = createRouter({
       component: () => import('../views/feedback/FeedbackList.vue')
     }
   ]
-})
+});
 
-export default router
+export default router;

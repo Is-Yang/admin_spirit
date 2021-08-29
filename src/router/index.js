@@ -23,7 +23,7 @@ const router = createRouter({
     }, {
       path: "/add-device",
       meta: {
-          // showMenu: true,
+          showMenu: true,
       },
       component: () =>
           import ("../views/device/DeviceAdd.vue"),

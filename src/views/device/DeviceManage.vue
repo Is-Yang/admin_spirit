@@ -1,5 +1,5 @@
 <template>
-  <el-card class="order-container">
+  <el-card class="device-container">
     <template #header>
       <div class="search-filter">
         <el-row type="flex" :gutter="10">
@@ -338,7 +338,7 @@ export default {
 </script>
 
 <style scoped>
-.order-container {
+.device-container {
   min-height: 100%;
 }
 .el-card.is-always-shadow {

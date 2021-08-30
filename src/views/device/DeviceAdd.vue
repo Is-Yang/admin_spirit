@@ -1,35 +1,13 @@
 <template>
   <div class="add-device" v-loading="loading">
-    <el-button
-      type="text"
-      class="goback-btn"
-      icon="el-icon-back"
-      @click="goBack"
-      >返回</el-button
-    >
+    <el-button class="goback-btn" @click="goBack">返回</el-button>
     <div class="top">
       <!-- :type="activeType == 1 ? 'primary' : ''" -->
       <el-button-group>
-        <el-button
-          :type="activeType == 1 ? 'primary' : ''"
-          @click="changeType(1)"
-          >基本信息</el-button
-        >
-        <el-button
-          :type="activeType == 2 ? 'primary' : ''"
-          @click="changeType(2)"
-          >末端设备安装信息</el-button
-        >
-        <el-button
-          :type="activeType == 3 ? 'primary' : ''"
-          @click="changeType(3)"
-          >节点测试报告信息</el-button
-        >
-        <el-button
-          :type="activeType == 4 ? 'primary' : ''"
-          @click="changeType(4)"
-          >紧急联系人信息</el-button
-        >
+        <el-button :type="activeType == 1 ? 'primary' : ''" @click="changeType(1)">基本信息</el-button>
+        <el-button :type="activeType == 2 ? 'primary' : ''" @click="changeType(2)">末端设备安装信息</el-button>
+        <el-button :type="activeType == 3 ? 'primary' : ''" @click="changeType(3)">节点测试报告信息</el-button>
+        <el-button :type="activeType == 4 ? 'primary' : ''" @click="changeType(4)">紧急联系人信息</el-button>
       </el-button-group>
     </div>
     <div class="info-wrap base-info">
@@ -41,28 +19,17 @@
         :label-position="left"
         :rules="baseFormRules"
       >
-        <el-form-item label="设备序列号">
-          {{ baseFormData.deviceNo }}
-        </el-form-item>
+        <el-form-item label="设备序列号">{{ baseFormData.deviceNo }}</el-form-item>
         <el-form-item label="设备安装时间">
           <el-col :span="16">
             <!-- <el-input v-model="baseFormData.instTime"></el-input> -->
-            <el-date-picker
-              v-model="baseFormData.instTime"
-              type="datetime"
-              placeholder="选择日期时间"
-            >
-            </el-date-picker>
+            <el-date-picker v-model="baseFormData.instTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
           </el-col>
         </el-form-item>
 
         <el-row :gutter="10">
           <el-col :span="12">
-            <el-form-item
-              label="安装地址"
-              prop="insProvice"
-              label-width="120px"
-            >
+            <el-form-item label="安装地址" prop="insProvice" label-width="120px">
               <el-select
                 v-model="baseFormData.insProvice"
                 placeholder="请选择省"
@@ -78,11 +45,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="" prop="insCountry" label-width="0">
-              <el-select
-                v-model="baseFormData.insCountry"
-                placeholder="请选择市"
-              >
+            <el-form-item label prop="insCountry" label-width="0">
+              <el-select v-model="baseFormData.insCountry" placeholder="请选择市">
                 <el-option
                   v-for="cItem in cityData"
                   :key="cItem.value"
@@ -94,17 +58,8 @@
           </el-col>
         </el-row>
         <!-- <el-row> -->
-        <el-form-item
-          label=""
-          prop="insAddress"
-          label-width="0"
-          style="margin-left: 120px"
-        >
-          <el-input
-            type="textarea"
-            v-model="baseFormData.insAddress"
-            placeholder="详细地址"
-          ></el-input>
+        <el-form-item label prop="insAddress" label-width="0" style="margin-left: 120px">
+          <el-input type="textarea" v-model="baseFormData.insAddress" placeholder="详细地址"></el-input>
         </el-form-item>
         <!-- </el-row> -->
 
@@ -123,13 +78,7 @@
     <div class="info-wrap install-info">
       <div class="title" id="install-info">末端设备安装信息</div>
       <div class="add-btn">
-        <el-button
-          type="primary"
-          size="medium"
-          icon="el-icon-plus"
-          @click="editInstall('add')"
-          >新增</el-button
-        >
+        <el-button type="primary" size="medium" icon="el-icon-plus" @click="editInstall('add')">新增</el-button>
       </div>
       <el-form
         ref="installForm"
@@ -141,28 +90,14 @@
         <el-form-item v-for="(item, index) in endDevice" :key="index">
           <el-row :gutter="10">
             <el-col :span="7">
-              <el-input
-                v-model="item.deviceName"
-                placeholder="请填写设备"
-              ></el-input>
+              <el-input v-model="item.deviceName" placeholder="请填写设备"></el-input>
             </el-col>
-            <el-input-number
-              v-model="item.floor"
-              placeholder="楼层"
-            ></el-input-number>
+            <el-input-number v-model="item.floor" placeholder="楼层"></el-input-number>
             <el-col :span="7">
-              <el-input
-                v-model="item.roomNo"
-                placeholder="请填写房号"
-              ></el-input>
+              <el-input v-model="item.roomNo" placeholder="请填写房号"></el-input>
             </el-col>
             <el-col :span="2">
-              <span
-                class="del-text"
-                v-if="index > 0"
-                @click="editInstall('del', index)"
-                >删除</span
-              >
+              <span class="del-text" v-if="index > 0" @click="editInstall('del', index)">删除</span>
             </el-col>
           </el-row>
         </el-form-item>
@@ -197,7 +132,7 @@ const linkIdMap = {
   1: "#base-info",
   2: "#install-info",
   3: "#report-info",
-  4: "#contact-info",
+  4: "#contact-info"
 };
 export default {
   deviceName: "DeviceAdd",
@@ -214,46 +149,46 @@ export default {
         insAddress: "",
         customerName: "", // 公司名称
         computerID: "", // 电脑id
-        controlCode: "", // 控制号
+        controlCode: "" // 控制号
         // validDay: 2, // 有效期
       },
       baseFormRules: {
         insProvice: [
-          { required: true, message: "请选择省", trigger: "change" },
+          { required: true, message: "请选择省", trigger: "change" }
         ],
         insCountry: [
-          { required: true, message: "请选择市", trigger: "change" },
+          { required: true, message: "请选择市", trigger: "change" }
         ],
         insAddress: [
-          { required: true, message: "请输入详细地址", trigger: "blur" },
+          { required: true, message: "请输入详细地址", trigger: "blur" }
         ],
         computerID: [
-          { required: true, message: "请选择活动区域", trigger: "blur" },
+          { required: true, message: "请选择活动区域", trigger: "blur" }
         ],
         controlCode: [
-          { required: true, message: "请选择活动区域", trigger: "blur" },
-        ],
+          { required: true, message: "请选择活动区域", trigger: "blur" }
+        ]
       },
       proviceData: [],
       cityData: [],
       // install info11
       installFormRules: {
         deviceName: [
-          { required: true, message: "请选择省", trigger: "change" },
+          { required: true, message: "请选择省", trigger: "change" }
         ],
         floor: [{ required: true, message: "请选择市", trigger: "change" }],
-        roomNo: [{ required: true, message: "请选择市", trigger: "change" }],
+        roomNo: [{ required: true, message: "请选择市", trigger: "change" }]
       },
       endDevice: [
         {
           deviceName: "",
           floor: "",
-          roomNo: "",
-        },
+          roomNo: ""
+        }
       ],
       floorData: [-3, -2, -1, 0, 1, 2, 3, 4, 5],
       contactInfo: "",
-      isEdit: false,
+      isEdit: false
     });
 
     const baseForm = ref(null);
@@ -261,17 +196,17 @@ export default {
     const router = useRouter(),
       route = useRoute();
     onMounted(() => {
-      state.proviceData = regionData.map((x) => {
+      state.proviceData = regionData.map(x => {
         return {
           value: x.value,
-          label: x.label,
+          label: x.label
         };
       });
       const deviceId = route.query.id;
       if (deviceId) {
         state.isEdit = true;
         getDeviceDetails(deviceId)
-          .then((res) => {
+          .then(res => {
             if (res.code == 0) {
               const {
                 deviceNo,
@@ -281,9 +216,9 @@ export default {
                 insAddress,
                 customerName,
                 computerID,
-                controlCode,
+                controlCode
               } = res.data;
-              const cityData = regionData.find((x) => x.label == insProvice);
+              const cityData = regionData.find(x => x.label == insProvice);
               state.cityData = (cityData && cityData.children) || [];
               state.baseFormData = {
                 deviceNo,
@@ -293,47 +228,47 @@ export default {
                 insAddress,
                 customerName,
                 computerID,
-                controlCode,
+                controlCode
               };
               state.endDevice = res.data.endDevice || [
                 {
                   deviceName: "",
                   floor: "",
-                  roomNo: "",
-                },
+                  roomNo: ""
+                }
               ];
             }
           })
-          .catch((err) => {
+          .catch(err => {
             ElMessage.error({
               message: err,
-              type: "error",
+              type: "error"
             });
           });
       } else {
         getDeviceNo()
-          .then((res) => {
+          .then(res => {
             if (res.code == 0) {
               state.baseFormData.deviceNo = res.data;
             }
           })
-          .catch((err) => {
+          .catch(err => {
             ElMessage.error({
               message: err,
-              type: "error",
+              type: "error"
             });
           });
       }
     });
 
-    const changeType = (type) => {
+    const changeType = type => {
       state.activeType = type;
       document.querySelector(linkIdMap[type]).scrollIntoView(true);
     };
 
-    const changeProvice = (val) => {
+    const changeProvice = val => {
       state.baseFormData.insCountry = "";
-      const cityData = regionData.find((x) => x.value == val);
+      const cityData = regionData.find(x => x.value == val);
       state.cityData = (cityData && cityData.children) || [];
     };
 
@@ -342,7 +277,7 @@ export default {
         state.endDevice.push({
           deviceName: "",
           floor: "",
-          roomNo: "",
+          roomNo: ""
         });
       } else if (type === "del") {
         state.endDevice.splice(idx, 1);
@@ -355,14 +290,14 @@ export default {
       const instTime1 = new Date(state.baseFormData.instTime).toISOString();
       console.log(instTime1);
       // 校验到有没有填写的内容，重定位
-      baseForm.value.validate((valid) => {
+      baseForm.value.validate(valid => {
         if (!valid) {
           validAll = false;
           inValidType = 1;
         }
       });
 
-      installForm.value.validate((valid) => {
+      installForm.value.validate(valid => {
         if (!valid) {
           validAll = false;
           if (!inValidType) inValidType = "2";
@@ -372,7 +307,7 @@ export default {
       if (!validAll) {
         ElMessage.error({
           message: "请完整填写信息！",
-          type: "error",
+          type: "error"
         });
         state.loading = false;
         changeType(inValidType);
@@ -385,26 +320,26 @@ export default {
       const params = {
         ...state.baseFormData,
         instTime,
-        endDevice: state.endDevice.map((x) => {
+        endDevice: state.endDevice.map(x => {
           x.floor = String(x.floor);
           return x;
-        }),
+        })
       };
 
       state.loading = true;
 
       addDevice(params)
-        .then((res) => {
+        .then(res => {
           state.loading = false;
           if (res.code == 0) {
             ElMessage.success({
               message: "保存成功",
-              type: "success",
+              type: "success"
             });
             router.push({ path: "/device" });
           }
         })
-        .catch((err) => {
+        .catch(err => {
           state.loading = false;
           console.log(err);
         });
@@ -421,9 +356,9 @@ export default {
       editInstall,
       changeProvice,
       saveDevice,
-      goBack,
+      goBack
     };
-  },
+  }
 };
 </script>
 <style lang="less" scoped>
@@ -433,8 +368,8 @@ export default {
   position: relative;
   .goback-btn {
     position: absolute;
-    top: 10px;
-    right: 20px;
+    top: 20px;
+    right: 40px;
   }
   .el-form-item {
     margin-bottom: 20px;

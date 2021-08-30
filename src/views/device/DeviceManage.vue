@@ -32,7 +32,7 @@
           </el-col>
           <el-col :span="4">
             <span class="search-lable">地区</span>
-            <el-select v-model="queryParams.ins_provice" placeholder="请选择省" @change="changeProvice" size="small">
+            <el-select v-model="queryParams.ins_provice" clearable placeholder="请选择省" @change="changeProvice" size="small">
               <el-option
                 v-for="pItem in proviceData"
                 :key="pItem.value"
@@ -42,7 +42,7 @@
             </el-select>
           </el-col>
           <el-col :span="3">
-            <el-select v-model="queryParams.ins_country" placeholder="请选择市" size="small">
+            <el-select v-model="queryParams.ins_country" clearable placeholder="请选择市" size="small">
               <el-option
                 v-for="cItem in cityData"
                 :key="cItem.value"

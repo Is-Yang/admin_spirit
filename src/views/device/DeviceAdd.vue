@@ -1,13 +1,13 @@
 <template>
   <div class="add-device" v-loading="loading">
-    <el-button class="goback-btn" @click="goBack">返回</el-button>
+    <el-button class="goback-btn" size="small" @click="goBack">返回</el-button>
     <div class="top">
       <!-- :type="activeType == 1 ? 'primary' : ''" -->
       <el-button-group>
-        <el-button :type="activeType == 1 ? 'primary' : ''" @click="changeType(1)">基本信息</el-button>
-        <el-button :type="activeType == 2 ? 'primary' : ''" @click="changeType(2)">末端设备安装信息</el-button>
-        <el-button :type="activeType == 3 ? 'primary' : ''" @click="changeType(3)">节点测试报告信息</el-button>
-        <el-button :type="activeType == 4 ? 'primary' : ''" @click="changeType(4)">紧急联系人信息</el-button>
+        <el-button size="small" :type="activeType == 1 ? 'primary' : ''" @click="changeType(1)">基本信息</el-button>
+        <el-button size="small" :type="activeType == 2 ? 'primary' : ''" @click="changeType(2)">末端设备安装信息</el-button>
+        <el-button size="small" :type="activeType == 3 ? 'primary' : ''" @click="changeType(3)">节点测试报告信息</el-button>
+        <el-button size="small" :type="activeType == 4 ? 'primary' : ''" @click="changeType(4)">紧急联系人信息</el-button>
       </el-button-group>
     </div>
     <div class="info-wrap base-info">
@@ -78,7 +78,7 @@
     <div class="info-wrap install-info">
       <div class="title" id="install-info">末端设备安装信息</div>
       <div class="add-btn">
-        <el-button type="primary" size="medium" icon="el-icon-plus" @click="editInstall('add')">新增</el-button>
+        <el-button type="primary" size="small" icon="el-icon-plus" @click="editInstall('add')">新增</el-button>
       </div>
       <el-form
         ref="installForm"
@@ -106,7 +106,9 @@
     <el-divider></el-divider>
     <div class="info-wrap report-info">
       <div class="title" id="report-info">节点测试报告信息</div>
-      <div class="overview"></div>
+      <div class="overview">
+        <ReportInfo :data="reportData"></ReportInfo>
+      </div>
     </div>
     <el-divider></el-divider>
     <div class="info-wrap contact-info">
@@ -115,8 +117,8 @@
     </div>
     <el-divider></el-divider>
     <div class="save-btn">
-      <el-button type="primary" v-if="isEdit" @click="goBack">返回</el-button>
-      <el-button type="primary" v-else @click="saveDevice">保存</el-button>
+      <el-button size="small" type="primary" v-if="isEdit" @click="goBack">返回</el-button>
+      <el-button size="small" type="primary" v-else @click="saveDevice">保存</el-button>
     </div>
   </div>
 </template>
@@ -127,6 +129,7 @@ import regionData from "/@/components/ProvincesCascader/region.json";
 import { addDevice, getDeviceNo, getDeviceDetails } from "/@/api/admin";
 import { useRouter, useRoute } from "vue-router";
 import dayjs from "dayjs";
+import ReportInfo from './modules/report-info/Index.vue'
 
 const linkIdMap = {
   1: "#base-info",
@@ -136,6 +139,9 @@ const linkIdMap = {
 };
 export default {
   deviceName: "DeviceAdd",
+  components: {
+    ReportInfo
+  },
   setup() {
     const state = reactive({
       loading: false,
@@ -188,7 +194,39 @@ export default {
       ],
       floorData: [-3, -2, -1, 0, 1, 2, 3, 4, 5],
       contactInfo: "",
-      isEdit: false
+      isEdit: false,
+      reportData: {
+        overViewData: {
+          power: 200,
+          powerRadio: 10,
+          period: 160,
+          originPower: 2000,
+          originPowerFrom: 1000,
+          originPowerTo: 3000,
+          enegyPower: 1800,
+          enegyPowerFrom: 3000,
+          enegyPowerTo: 4800,
+          originTimeFrom: '2021.08.08 06:30:10',
+          originTimeTo: '2021.08.10 06:30:20',
+          enegyTimeFrom: '2021.08.11 06:30:10',
+          enegyTimeTo: '2021.08.13 06:30:10',
+        },
+        weathChartData: {
+          chartData: [],
+          settingValue: 1,
+          calcValue: 0.2
+        },
+        temperatureChartData: {
+          chartData: [],
+          settingValue: 1,
+          calcValue: 0.2
+        },
+        humidityChartData: {
+          chartData: [],
+          settingValue: 1,
+          calcValue: 0.2
+        },
+      }
     });
 
     const baseForm = ref(null);
@@ -374,8 +412,11 @@ export default {
   .el-form-item {
     margin-bottom: 20px;
   }
-  .info-wrap {
+  .base-info, .install-info {
     max-width: 700px;
+  }
+  .report-info {
+    max-width: 900px;
   }
   .title {
     margin: 20px 0;

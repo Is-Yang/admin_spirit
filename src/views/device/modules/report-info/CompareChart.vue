@@ -17,7 +17,7 @@
 
 <script>
 import { getCurrentInstance, onMounted, reactive, ref, toRefs } from "vue";
-import {lineOption} from './config.js';
+import echartOption from './echart.js';
 export default {
   name: 'DeviceDialog',
   props: {
@@ -42,11 +42,11 @@ export default {
   setup(props, context) {
     const {proxy} = getCurrentInstance();
     const state = reactive({
-      chartOption: lineOption
+      // chartOption: lineOption
     })
     const myCharts = ref(null);
 
-    const viewOriginData = () => {debugger
+    const viewOriginData = () => {
       context.emit("clickOrigin")
     }
     const clickCheck = () => {
@@ -55,7 +55,9 @@ export default {
     onMounted(() => {
       myCharts.value = proxy.$echarts.init(myCharts.value);
       // 绘制图表
-      myCharts.value.setOption(state.chartOption)
+      const option = echartOption.getLineOption();
+      // myCharts.value.setOption(state.chartOption)
+      myCharts.value.setOption(option)
     })
 
     return {

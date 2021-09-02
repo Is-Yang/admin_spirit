@@ -1,13 +1,14 @@
 <template>
   <div class="report-info">
     <TopOverview :data="data.overViewData"></TopOverview>
-    <CompareChart :data="data.weathChartData" :setting="weathChartOption" @clickOrigin="weathOriginClick(true)"></CompareChart>
-    <CompareChart :data="data.temperatureChartData" :setting="temperatureChartOption"></CompareChart>
-    <CompareChart :data="data.humidityChartData" :setting="humidityChartOption"></CompareChart>
+    <CompareChart :data="data.weatherChartData" :setting="weatherChartOption" @clickOrigin="weatherOriginClick(true)"></CompareChart>
+    <CompareChart :data="data.temperatureChartData" :setting="temperatureChartOption" @clickOrigin="temperatureOriginClick(true)"></CompareChart>
+    <CompareChart :data="data.humidityChartData" :setting="humidityChartOption" @clickOrigin="temperatureOriginClick(true)">></CompareChart>
     <div class="export-btn">
       <el-button type="primary" @click="exportReport">生成节点报告</el-button>
     </div>
-    <WeathDialog v-if="weathVisble" @closeDialog="weathOriginClick(false)"></WeathDialog>
+    <WeatherDialog v-if="weatherVisble" @closeDialog="weatherOriginClick(false)"></WeatherDialog>
+    <TemperatureDialog v-if="temperatureVisble" @closeDialog="temperatureOriginClick(false)"></TemperatureDialog>
   </div>
 </template>
 
@@ -16,7 +17,8 @@ import { onMounted, reactive, ref, toRefs } from "vue";
 import * as Http from '/@/api/admin'
 import TopOverview from './TopOverview.vue'
 import CompareChart from './CompareChart.vue'
-import WeathDialog from './WeathDialog.vue'
+import WeatherDialog from './WeatherDialog.vue'
+import TemperatureDialog from './TemperatureDialog.vue'
 
 export default {
   name: 'DeviceDialog',
@@ -39,7 +41,7 @@ export default {
           enegyTimeFrom: '2021.08.11 06:30:10',
           enegyTimeTo: '2021.08.13 06:30:10',
         },
-        weathChartData: {
+        weatherChartData: {
           chartData: [],
           settingValue: 1,
           calcValue: 0.2
@@ -60,11 +62,12 @@ export default {
   components: {
     TopOverview,
     CompareChart,
-    WeathDialog,
+    WeatherDialog,
+    TemperatureDialog,
   },
   setup(props) {
     const state = reactive({
-      weathChartOption: {
+      weatherChartOption: {
         title: '原始模式/节点模式天气对比',
         settingLabel: '天气气温偏差值设置:',
         calcLabel: '计算得出偏差值:',
@@ -79,7 +82,9 @@ export default {
         settingLabel: '末端湿度偏差值设置:',
         calcLabel: '计算得出偏差值:',
       },
-      weathVisble: false,
+      weatherVisble: false,
+      temperatureVisble: false,
+      humidityVisble: false,
 
     })
     
@@ -88,23 +93,23 @@ export default {
       
     }
     // 天气点击原始数据查看详情
-    const weathOriginClick = (type) => {debugger
-        state.weathVisble = type;
+    const weatherOriginClick = (type) => {debugger
+        state.weatherVisble = type;
     }
     // 温度点击原始数据查看详情
-    const temperatureOriginClick = () => {
-      
+    const temperatureOriginClick = (type) => {
+        state.temperatureVisble = type;
     }
     // 湿度点击原始数据查看详情
-    const humidityOriginClick = () => {
-      
+    const humidityOriginClick = (type) => {
+      state.humidityVisble = type;
     }
     
   
     return {
       ...toRefs(state),
       exportReport,
-      weathOriginClick,
+      weatherOriginClick,
       temperatureOriginClick,
       humidityOriginClick,
     }

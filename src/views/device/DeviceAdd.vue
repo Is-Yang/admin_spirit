@@ -211,7 +211,7 @@ export default {
           enegyTimeFrom: '2021.08.11 06:30:10',
           enegyTimeTo: '2021.08.13 06:30:10',
         },
-        weathChartData: {
+        weatherChartData: {
           chartData: [],
           settingValue: 1,
           calcValue: 0.2

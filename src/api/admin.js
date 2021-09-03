@@ -28,3 +28,8 @@ export function getDeviceList(params) {
 export function getExportFile(params) {
   return request.postAjax('/admin/export/devices', params, true)
 }
+
+// 反馈列表
+export function getFeedback(params) {
+  return request.postAjax('/admin/search/feedback', params, true)
+}

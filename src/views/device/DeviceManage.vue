@@ -72,30 +72,30 @@
       style="width: 100%"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column prop="deviceNo" label="设备序列号"></el-table-column>
+      <!-- <el-table-column type="selection" width="55"></el-table-column> -->
+      <el-table-column prop="deviceNo" label="设备序列号" with="150"></el-table-column>
       <el-table-column prop="ValidTime" label="有效期">
         <template #default="scope">
-          <span style="margin-left: 10px">{{formatDay(scope.row.ValidTime) }}</span>
+          <span>{{formatDay(scope.row.ValidTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="orderStatus" label="状态">
+      <el-table-column prop="orderStatus" label="状态" width="100">
         <template #default="scope">
-          <span style="margin-left: 10px">{{scope.row.status === 1 ? '有效' : '无效'}}</span>
+          <span>{{scope.row.status === 1 ? '有效' : '无效'}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="instTime" label="安装时间">
         <template #default="scope">
-          <span style="margin-left: 10px">{{formatDay(scope.row.instTime) }}</span>
+          <span>{{formatDay(scope.row.instTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="customerName" label="公司名称"></el-table-column>
       <el-table-column label="地址">
         <template #default="scope">
-          <span style="margin-left: 10px">{{getCompany(scope.row) }}</span>
+          <span>{{getCompany(scope.row) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="操作" width="140">
         <template #default="scope">
           <el-button
             type="text"
@@ -117,7 +117,6 @@
       />
     </div>
 
-    <!-- <DeviceDialog v-if="dialog.show" :type="dialog.type" @cancel="dialog.show = false"></DeviceDialog> -->
   </el-card>
 </template>
 
@@ -125,7 +124,6 @@
 import { onMounted, reactive, ref, toRefs } from "vue";
 import dayjs from "dayjs";
 import { useRouter } from "vue-router";
-// import DeviceDialog from "./modules/DeviceDialog.vue";
 import ProvincesCascader from "/@/components/ProvincesCascader/Index.vue";
 import * as Http from "/@/api/admin";
 import { ElMessageBox, ElMessage } from "element-plus";
@@ -134,16 +132,11 @@ import regionData from "/@/components/ProvincesCascader/region.json";
 export default {
   name: "DeviceManage",
   components: {
-    // DeviceDialog,
     ProvincesCascader
   },
   setup() {
     const state = reactive({
       loading: false,
-      dialog: {
-        show: false,
-        type: "add"
-      },
       tableData: [], // 数据列表
       multipleSelection: [], // 选中项
       total: 0, // 总条数
@@ -173,13 +166,11 @@ export default {
           label: "已激活"
         }
       ],
-      dialogVisible: false,
       isActive: false
     });
     const router = useRouter();
 
     onMounted(() => {
-      console.log(dayjs("2021-08-22T00:00:00+08:00").valueOf());
       state.proviceData = regionData.map(x => {
         return {
           value: x.value,
@@ -196,9 +187,9 @@ export default {
     // 新增
     const handleAdd = item => {
       if (item?.deviceNo) {
-        router.push(`/add-device?id=${item.deviceNo}`);
+        router.push(`/device/add?id=${item.deviceNo}`);
       } else {
-        router.push("/add-device");
+        router.push("/device/add");
       }
     };
     // 表单搜索

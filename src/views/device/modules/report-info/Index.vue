@@ -5,7 +5,7 @@
     <CompareChart :data="data.temperatureChartData" :setting="temperatureChartOption" @clickOrigin="temperatureOriginClick(true)"></CompareChart>
     <CompareChart :data="data.humidityChartData" :setting="humidityChartOption" @clickOrigin="temperatureOriginClick(true)">></CompareChart>
     <div class="export-btn">
-      <el-button type="primary" @click="exportReport">生成节点报告</el-button>
+      <el-button type="primary" size="small" @click="exportReport">生成节点报告</el-button>
     </div>
     <WeatherDialog v-if="weatherVisble" @closeDialog="weatherOriginClick(false)"></WeatherDialog>
     <TemperatureDialog v-if="temperatureVisble" @closeDialog="temperatureOriginClick(false)"></TemperatureDialog>

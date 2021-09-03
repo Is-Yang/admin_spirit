@@ -53,9 +53,6 @@ http.interceptors.response.use(
           }).then(() => {
             localStorage.removeItem('token');
             router.push('/login');
-            window.location.reload();
-          }).catch(() => {
-            window.location.reload();       
           });
       }
     }

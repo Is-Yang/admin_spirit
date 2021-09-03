@@ -21,9 +21,9 @@ const router = createRouter({
       },
       component: () => import('../views/device/DeviceManage.vue')
     }, {
-      path: "/add-device",
+      path: "/device/add",
       meta: {
-          showMenu: true,
+        showMenu: true,
       },
       component: () =>
           import ("../views/device/DeviceAdd.vue"),

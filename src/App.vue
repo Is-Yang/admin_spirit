@@ -2,18 +2,20 @@
   <div id="app">
     <el-container v-if="state.showMenu" class="layout">
       <Header />
-      <el-main style="padding-top: 80px;">
-        <router-view />
+      <el-main class="main-wrapper" :style="{ 'height': state.minHeight + 'px' }">
+        <div class="main-content">
+         <router-view />
+        </div>
       </el-main>
     </el-container>
     <template v-else>
-     <router-view />
+      <router-view />
     </template>
   </div>
 </template>
 
 <script>
-import { onUnmounted, reactive } from 'vue'
+import { onUnmounted, onMounted, reactive } from 'vue'
 import Header from '/@/components/Header.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { localGet } from '/@/utils'
@@ -27,7 +29,8 @@ export default {
     const route = useRoute()
     const router = useRouter()
     const state = reactive({
-      showMenu: false
+      showMenu: false,
+      minHeight: 600
     })
 
     const unwatch = router.beforeEach((to, from, next) => {
@@ -49,6 +52,18 @@ export default {
       }
     })
 
+    const resetHeight = () => {
+      state.minHeight = `${document.documentElement.clientHeight}` - 60;
+      // if (state.minHeight < 550) state.minHeight = 550;
+    }
+
+    onMounted(() => {
+      resetHeight();
+      window.onresize = () => {
+        resetHeight(); // 窗口改变执行
+      };
+    })
+
     onUnmounted(() => {
       unwatch()
     })
@@ -67,6 +82,16 @@ export default {
     min-width: 1200px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    .main-wrapper {
+      margin-top: 60px;
+      overflow: hidden;
+
+      .main-content {
+        overflow-y: auto;
+        height: 100%;
+      }
+    }
 
     .layout {
       height: 100%;

@@ -1,124 +1,140 @@
 <template>
   <div class="add-device" v-loading="loading">
-    <el-button class="goback-btn" size="small" @click="goBack">返回</el-button>
-    <div class="top">
-      <!-- :type="activeType == 1 ? 'primary' : ''" -->
+    <div class="nav-bar">
       <el-button-group>
-        <el-button size="small" :type="activeType == 1 ? 'primary' : ''" @click="changeType(1)">基本信息</el-button>
-        <el-button size="small" :type="activeType == 2 ? 'primary' : ''" @click="changeType(2)">末端设备安装信息</el-button>
-        <el-button size="small" :type="activeType == 3 ? 'primary' : ''" @click="changeType(3)">节点测试报告信息</el-button>
-        <el-button size="small" :type="activeType == 4 ? 'primary' : ''" @click="changeType(4)">紧急联系人信息</el-button>
+        <el-button :type="activeType == 1 ? 'primary' : ''" @click="changeType(1)">基本信息</el-button>
+        <el-button :type="activeType == 2 ? 'primary' : ''" @click="changeType(2)">末端设备安装信息</el-button>
+        <el-button :type="activeType == 3 ? 'primary' : ''" @click="changeType(3)">节点测试报告信息</el-button>
+        <el-button :type="activeType == 4 ? 'primary' : ''" @click="changeType(4)">紧急联系人信息</el-button>
       </el-button-group>
-    </div>
-    <div class="info-wrap base-info">
-      <div class="title" id="base-info">基本信息</div>
-      <el-form
-        ref="baseForm"
-        :model="baseFormData"
-        label-width="120px"
-        :label-position="left"
-        :rules="baseFormRules"
-      >
-        <el-form-item label="设备序列号">{{ baseFormData.deviceNo }}</el-form-item>
-        <el-form-item label="设备安装时间">
-          <el-col :span="16">
-            <!-- <el-input v-model="baseFormData.instTime"></el-input> -->
-            <el-date-picker v-model="baseFormData.instTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
-          </el-col>
-        </el-form-item>
 
-        <el-row :gutter="10">
-          <el-col :span="12">
-            <el-form-item label="安装地址" prop="insProvice" label-width="120px">
-              <el-select
-                v-model="baseFormData.insProvice"
-                placeholder="请选择省"
-                @change="changeProvice"
-              >
-                <el-option
-                  v-for="pItem in proviceData"
-                  :key="pItem.value"
-                  :label="pItem.label"
-                  :value="pItem.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label prop="insCountry" label-width="0">
-              <el-select v-model="baseFormData.insCountry" placeholder="请选择市">
-                <el-option
-                  v-for="cItem in cityData"
-                  :key="cItem.value"
-                  :label="cItem.label"
-                  :value="cItem.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <!-- <el-row> -->
-        <el-form-item label prop="insAddress" label-width="0" style="margin-left: 120px">
-          <el-input type="textarea" v-model="baseFormData.insAddress" placeholder="详细地址"></el-input>
-        </el-form-item>
-        <!-- </el-row> -->
-
-        <el-form-item label="客户名称">
-          <el-input v-model="baseFormData.customerName"></el-input>
-        </el-form-item>
-        <el-form-item label="电脑ID" prop="computerID">
-          <el-input v-model="baseFormData.computerID"></el-input>
-        </el-form-item>
-        <el-form-item label="控制码" prop="controlCode">
-          <el-input v-model="baseFormData.controlCode"></el-input>
-        </el-form-item>
-      </el-form>
-    </div>
-    <el-divider></el-divider>
-    <div class="info-wrap install-info">
-      <div class="title" id="install-info">末端设备安装信息</div>
-      <div class="add-btn">
-        <el-button type="primary" size="small" icon="el-icon-plus" @click="editInstall('add')">新增</el-button>
+      <div>
+        <el-button type="primary" @click="saveDevice">保存</el-button>
+        <el-button @click="goBack">返回</el-button>
       </div>
-      <el-form
-        ref="installForm"
-        :model="endDevice"
-        label-width="0px"
-        :label-position="left"
-        :rules="installFormRules"
-      >
-        <el-form-item v-for="(item, index) in endDevice" :key="index">
+    </div>
+
+    <div class="form-wrap">
+      <div class="info-wrap base-info">
+        <div class="title" id="base-info">基本信息</div>
+        <el-form
+          ref="baseForm"
+          :model="baseFormData"
+          label-width="120px"
+          :label-position="left"
+          :rules="baseFormRules"
+        >
+          <el-form-item label="设备序列号">{{ baseFormData.deviceNo }}</el-form-item>
+          <el-form-item label="设备安装时间">
+            <el-col :span="16">
+              <!-- <el-input v-model="baseFormData.instTime"></el-input> -->
+              <el-date-picker v-model="baseFormData.instTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
+            </el-col>
+          </el-form-item>
+
           <el-row :gutter="10">
-            <el-col :span="7">
-              <el-input v-model="item.deviceName" placeholder="请填写设备"></el-input>
+            <el-col :span="8">
+              <el-form-item label="安装地址" prop="insProvice" label-width="120px">
+                <el-select
+                  v-model="baseFormData.insProvice"
+                  placeholder="请选择省"
+                  @change="changeProvice"
+                >
+                  <el-option
+                    v-for="pItem in proviceData"
+                    :key="pItem.value"
+                    :label="pItem.label"
+                    :value="pItem.value"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
             </el-col>
-            <el-input-number v-model="item.floor" placeholder="楼层"></el-input-number>
-            <el-col :span="7">
-              <el-input v-model="item.roomNo" placeholder="请填写房号"></el-input>
-            </el-col>
-            <el-col :span="2">
-              <span class="del-text" v-if="index > 0" @click="editInstall('del', index)">删除</span>
+            <el-col :span="8">
+              <el-form-item label prop="insCountry" label-width="0">
+                <el-select v-model="baseFormData.insCountry" placeholder="请选择市">
+                  <el-option
+                    v-for="cItem in cityData"
+                    :key="cItem.value"
+                    :label="cItem.label"
+                    :value="cItem.value"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
             </el-col>
           </el-row>
-        </el-form-item>
-      </el-form>
-    </div>
-    <el-divider></el-divider>
-    <div class="info-wrap report-info">
-      <div class="title" id="report-info">节点测试报告信息</div>
-      <div class="overview">
-        <ReportInfo :data="reportData"></ReportInfo>
+          <!-- <el-row> -->
+          <el-form-item label prop="insAddress" label-width="0" style="margin-left: 120px">
+            <el-input type="textarea" v-model="baseFormData.insAddress" placeholder="详细地址"></el-input>
+          </el-form-item>
+          <!-- </el-row> -->
+
+          <el-form-item label="客户名称">
+            <el-input v-model="baseFormData.customerName"></el-input>
+          </el-form-item>
+          <el-form-item label="电脑ID" prop="computerID">
+            <el-input v-model="baseFormData.computerID"></el-input>
+          </el-form-item>
+          <el-form-item label="控制码" prop="controlCode">
+            <el-input v-model="baseFormData.controlCode"></el-input>
+          </el-form-item>
+        </el-form>
       </div>
-    </div>
-    <el-divider></el-divider>
-    <div class="info-wrap contact-info">
-      <div class="title" id="contact-info">紧急联系人信息</div>
-      <el-input type="textarea" v-model="contactInfo"></el-input>
-    </div>
-    <el-divider></el-divider>
-    <div class="save-btn">
-      <el-button size="small" type="primary" v-if="isEdit" @click="goBack">返回</el-button>
-      <el-button size="small" type="primary" v-else @click="saveDevice">保存</el-button>
+      <el-divider></el-divider>
+      <div class="info-wrap install-info">
+        <div class="title" id="install-info">末端设备安装信息</div>
+        <div class="add-btn">
+          <el-button type="primary" size="small" icon="el-icon-plus" @click="editInstall('add')">新增</el-button>
+        </div>
+        <el-form
+          ref="installForm"
+          :model="endDevice"
+          label-width="0px"
+          :label-position="left"
+          :rules="installFormRules"
+        >
+          <el-form-item v-for="(item, index) in endDevice" :key="index">
+            <el-row :gutter="10">
+              <el-col :span="4">
+                <el-input v-model="item.meterNum" placeholder="请填写设备编号"></el-input>
+              </el-col>
+              <el-col :span="4">
+                <el-input v-model="item.deviceName" placeholder="请填写设备名称"></el-input>
+              </el-col>
+              <el-col :span="3">
+                <el-select v-model="item.type" placeholder="请选择设备类型" style="width: 100%;">
+                  <el-option
+                    v-for="item in typeOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </el-col>
+              <el-col :span="4">
+                <el-input-number v-model="item.floor" placeholder="楼层" style="width: 100%"></el-input-number>
+              </el-col>
+              <el-col :span="3">
+                <el-input v-model="item.roomNo" placeholder="请填写房号"></el-input>
+              </el-col>
+              <el-col :span="2">
+                <span class="del-text" v-if="index > 0" @click="editInstall('del', index)">删除</span>
+              </el-col>
+            </el-row>
+          </el-form-item>
+        </el-form>
+      </div>
+      <el-divider></el-divider>
+      <div class="info-wrap report-info">
+        <div class="title" id="report-info">节点测试报告信息</div>
+        <div class="overview">
+          <ReportInfo :data="reportData"></ReportInfo>
+        </div>
+      </div>
+      <el-divider></el-divider>
+      <div class="info-wrap contact-info">
+        <div class="title" id="contact-info">紧急联系人信息</div>
+        <el-input type="textarea" v-model="contactInfo"></el-input>
+      </div>
     </div>
   </div>
 </template>
@@ -158,6 +174,15 @@ export default {
         controlCode: "" // 控制号
         // validDay: 2, // 有效期
       },
+      typeOptions: [
+        {
+          value: 1,
+          label: '电量采集'
+        }, {
+          value: 2,
+          label: '温湿度采集'
+        }
+      ],
       baseFormRules: {
         insProvice: [
           { required: true, message: "请选择省", trigger: "change" }
@@ -187,7 +212,9 @@ export default {
       },
       endDevice: [
         {
+          meterNum: "",
           deviceName: "",
+          type: null,
           floor: "",
           roomNo: ""
         }
@@ -402,18 +429,33 @@ export default {
 <style lang="less" scoped>
 .add-device {
   background: #fff;
-  padding: 20px;
+  padding: 0 0 35px 0;
   position: relative;
-  .goback-btn {
-    position: absolute;
-    top: 20px;
-    right: 40px;
+
+  .nav-bar {
+    padding: 20px;
+    position: sticky;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    top: 0;
+    z-index: 9;
+    background-color: #fff;
+    box-shadow: 0px 11px 10px 0px rgba(184, 184, 184, 0.1);
   }
+
+  .form-wrap {
+    padding: 0 20px;
+  }
+
   .el-form-item {
     margin-bottom: 20px;
   }
-  .base-info, .install-info {
-    max-width: 700px;
+  .base-info {
+    max-width: 800px;
+  }
+  .install-info {
+    width: 1000px;
   }
   .report-info {
     max-width: 900px;
@@ -424,10 +466,6 @@ export default {
   }
   .add-btn {
     margin-bottom: 20px;
-  }
-  .save-btn {
-    margin-top: 20px;
-    text-align: center;
   }
   .install-info {
     .del-text {

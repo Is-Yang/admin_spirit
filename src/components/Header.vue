@@ -7,19 +7,19 @@
         </div>
 
         <el-menu class="menu-nav"
-          mode="horizontal" 
-          router 
+          mode="horizontal"
+          background-color="#21262b"
+          :router="true"
+          :default-active="currentPath"
         >
           <el-menu-item index="/device">设备管理</el-menu-item>
           <el-menu-item index="/feedback">意见反馈</el-menu-item>
         </el-menu>
       </div>
 
-      <el-menu mode="horizontal" class="avatar-container display-flex">
+      <div class="avatar-container display-flex">
         <el-dropdown @command="handleDropdown">
           <div class="avatar-wrapper">
-            <!-- <img > -->
-            
             <span class="user-avatar">
               <i class="el-icon-user-solid"></i>
             </span>
@@ -32,24 +32,27 @@
             </el-dropdown-menu>
           </template>
         </el-dropdown>
-      </el-menu>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from 'vue';
+import { defineComponent, ref, toRefs, watch, reactive } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
 import { localRemove, localGet } from '/@/utils'
 
 export default defineComponent({
   name: 'Header',
   setup() {
-    const activeIndex = ref('1');
     const router = useRouter();
     const route = useRoute();
     const userName = localGet('username') || '';
-    const path = null;
+
+    const state = reactive({
+      currentPath: '/device'
+    })
+    
     const handleDropdown = (command) => {
       switch (command) {
         case 'logout':
@@ -61,10 +64,20 @@ export default defineComponent({
       }
     };
 
+    console.log(route.path)
+
+    watch(() => route.path, () => {
+      let index = route.path.lastIndexOf('/');
+      if (index > 0) {
+        state.currentPath = route.path.substr(0, index);
+      } else {
+        state.currentPath = route.path;
+      }
+    })
+
     return {
+      ...toRefs(state),
       userName,
-      path,
-      activeIndex,
       handleDropdown
     };
   },
@@ -98,25 +111,21 @@ export default defineComponent({
       }
       .logo-name {
         font-size: 24px;
+        padding-right: 35px;
       }
       .menu-nav {
-        padding-left: 35px;
-
         .el-menu-item {
           padding: 0;
           padding: 0 18px;
           color: #bfcbd9;
 
-          &.is-current, &:hover, &:focus {
+          &.is-active, &:hover, &:focus {
             border-bottom: 4px solid #409EFF !important;
             color: #fff;
             background: #1b1e23;
           }
         }
       }
-    }
-    .el-menu {
-      background-color: transparent;
     }
     .avatar-container {
       outline: none;

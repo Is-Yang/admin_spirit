@@ -161,7 +161,7 @@ export default {
         state.weatherVisble = type;
     }
     // 温度点击原始数据查看详情
-    const temperatureOriginClick = (type) => {
+    const temperatureOriginClick = (type) => {debugger
         state.temperatureVisble = type;
     }
     // 湿度点击原始数据查看详情

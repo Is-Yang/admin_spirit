@@ -3,8 +3,11 @@
     :data="tableData"
     :max-height="300"
     style="width: 100%">
-    <el-table-column prop="day" label="日期"></el-table-column>
-    <el-table-column prop="originHum" label="湿度"></el-table-column>
+    <el-table-column prop="CreatedDay" label="创建日期"></el-table-column>
+    <el-table-column prop="DeviceNo" label="设备号"></el-table-column>
+    <el-table-column prop="DeviceName" label="设备名称"></el-table-column>
+    <el-table-column prop="Humility" label="湿度"></el-table-column>
+    <el-table-column prop="Tempreture" label="温度"></el-table-column>
   </el-table>
 </template>
 
@@ -17,7 +20,7 @@ export default {
   name: 'weathDialog',
   props: {
     meterNum: '',
-    dialogType: 'hum'
+    model: '',
   },
   emits: ["closeDialog"],
   setup(props) {
@@ -31,11 +34,10 @@ export default {
       const params = {
         deviceNo: state.deviceNo,
         meterNum: props.meterNum,
-        model: 1,
+        model: props.model,
       }
       getTempAndHumDetails(params)
       .then(res => {
-        console.log(res,'getTempAndHumDetails');
         if (res.code == 0) {
           state.tableData = res.data;
         }

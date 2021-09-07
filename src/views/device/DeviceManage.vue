@@ -32,7 +32,13 @@
           </el-col>
           <el-col :span="4">
             <span class="search-lable">地区</span>
-            <el-select v-model="queryParams.ins_provice" clearable placeholder="请选择省" @change="changeProvice" size="small">
+            <el-select
+              v-model="queryParams.ins_provice_code"
+              clearable
+              placeholder="请选择省"
+              @change="changeProvice"
+              size="small"
+            >
               <el-option
                 v-for="pItem in proviceData"
                 :key="pItem.value"
@@ -42,7 +48,12 @@
             </el-select>
           </el-col>
           <el-col :span="3">
-            <el-select v-model="queryParams.ins_country" clearable placeholder="请选择市" size="small">
+            <el-select
+              v-model="queryParams.ins_country_code"
+              clearable
+              placeholder="请选择市"
+              size="small"
+            >
               <el-option
                 v-for="cItem in cityData"
                 :key="cItem.value"
@@ -116,7 +127,6 @@
         @current-change="changePage"
       />
     </div>
-
   </el-card>
 </template>
 
@@ -147,8 +157,10 @@ export default {
         device_no: "",
         inst_time: "", // 安装时间
         ins_provice: "",
+        ins_provice_code: "",
         ins_country: "",
-        ins_address: ""
+        ins_country_code: "",
+     
       },
       proviceData: [],
       cityData: [],
@@ -158,12 +170,12 @@ export default {
           label: "全部"
         },
         {
-          value: 0,
-          label: "未激活"
+          value: "1",
+          label: "已激活"
         },
         {
-          value: 1,
-          label: "已激活"
+          value: "2",
+          label: "未激活"
         }
       ],
       isActive: false
@@ -180,7 +192,7 @@ export default {
       queryData();
     });
     const changeProvice = val => {
-      state.queryParams.ins_country = "";
+      state.queryParams.ins_country_code = "";
       const cityData = regionData.find(x => x.value == val);
       state.cityData = (cityData && cityData.children) || [];
     };
@@ -197,6 +209,20 @@ export default {
       const filters = [];
       for (const key in state.queryParams) {
         if (state.queryParams[key]) {
+          if (key === "ins_provice_code") {
+            filters.push({
+              field: 'ins_provice',
+              value: [state.proviceData.find(ele => ele.value === state.queryParams[key] ).label],
+              condition:  "equal"
+            });
+          }
+          if (key === "ins_country_code") {
+            filters.push({
+              field: 'ins_country',
+              value: [state.proviceData.find(ele => ele.value === state.queryParams[key] ).label],
+              condition:  "equal"
+            });
+          }
           filters.push({
             field: key,
             value:
@@ -249,12 +275,6 @@ export default {
     const getCompany = item => {
       return item.insProvice + item.insCountry + item.insAddress;
     };
-    // 地址选择
-    const addressChange = obj => {
-      state.queryParams.ins_provice = obj?.[0];
-      state.queryParams.ins_country = obj?.[1];
-      state.queryParams.ins_address = obj?.[2];
-    };
     // 操作
     const operation = item => {
       ElMessageBox({
@@ -268,7 +288,7 @@ export default {
       })
         .then(() => {
           const params = {
-            deviceNo: item.DeviceNo,
+            deviceNo: item.deviceNo,
             status: item.status === 1 ? 2 : 1
           };
           Http.changeDeviceStatus(params)
@@ -316,7 +336,7 @@ export default {
       state.currentPage = 1;
       state.pageSize = 10;
       queryData();
-    }
+    };
 
     return {
       ...toRefs(state),
@@ -329,8 +349,7 @@ export default {
       querySearchData,
       handleReset,
       changeProvice,
-      exportFil,
-      addressChange
+      exportFil
     };
   }
 };

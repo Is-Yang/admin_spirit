@@ -209,20 +209,21 @@ export default {
       const filters = [];
       for (const key in state.queryParams) {
         if (state.queryParams[key]) {
-          if (key === "ins_provice_code") {
-            filters.push({
-              field: 'ins_provice',
-              value: [state.proviceData.find(ele => ele.value === state.queryParams[key] ).label],
-              condition:  "equal"
-            });
-          }
-          if (key === "ins_country_code") {
-            filters.push({
-              field: 'ins_country',
-              value: [state.proviceData.find(ele => ele.value === state.queryParams[key] ).label],
-              condition:  "equal"
-            });
-          }
+          //TODO: 
+          // if (key === "ins_provice_code") {
+          //   filters.push({
+          //     field: 'ins_provice',
+          //     value: [state.proviceData.find(ele => ele.value === state.queryParams[key] ).label],
+          //     condition:  "equal"
+          //   });
+          // }
+          // if (key === "ins_country_code") {
+          //   filters.push({
+          //     field: 'ins_country',
+          //     value: [state.cityData.find(ele => ele.value === state.queryParams[key] ).label],
+          //     condition:  "equal"
+          //   });
+          // }
           filters.push({
             field: key,
             value:

@@ -4,7 +4,7 @@
       <el-button-group>
         <el-button :type="activeType == 1 ? 'primary' : ''" @click="changeType(1)">基本信息</el-button>
         <el-button :type="activeType == 2 ? 'primary' : ''" @click="changeType(2)">末端设备安装信息</el-button>
-        <el-button :type="activeType == 3 ? 'primary' : ''" @click="changeType(3)">节点测试报告信息</el-button>
+        <el-button v-if="deviceId" :type="activeType == 3 ? 'primary' : ''" @click="changeType(3)" >节点测试报告信息</el-button>
         <el-button :type="activeType == 4 ? 'primary' : ''" @click="changeType(4)">紧急联系人信息</el-button>
       </el-button-group>
 
@@ -124,13 +124,13 @@
         </el-form>
       </div>
       <el-divider></el-divider>
-      <div class="info-wrap report-info">
+      <div class="info-wrap report-info" v-if="deviceId">
         <div class="title" id="report-info">节点测试报告信息</div>
         <div class="overview">
-          <ReportInfo :data="reportData"></ReportInfo>
+          <ReportInfo :data="reportData" :endDevice="endDevice"></ReportInfo>
         </div>
+      <el-divider v-if="deviceId"></el-divider>
       </div>
-      <el-divider></el-divider>
       <div class="info-wrap contact-info">
         <div class="title" id="contact-info">紧急联系人信息</div>
         <el-input type="textarea" v-model="contactInfo"></el-input>
@@ -139,7 +139,7 @@
   </div>
 </template>
 <script>
-import { onMounted, reactive, ref, toRefs } from "vue";
+import { onMounted, reactive, ref, toRefs, computed } from "vue";
 import { ElMessage } from "element-plus";
 import regionData from "/@/components/ProvincesCascader/region.json";
 import { addDevice, getDeviceNo, getDeviceDetails } from "/@/api/admin";
@@ -181,9 +181,6 @@ export default {
         }, {
           value: 2,
           label: '温湿度采集'
-        }, {
-          value: 3,
-          label: '空调测试'
         }
       ],
       baseFormRules: {
@@ -218,7 +215,7 @@ export default {
           meterNum: "",
           deviceName: "",
           type: null,
-          floor: "",
+          floor: 0,
           roomNo: ""
         }
       ],
@@ -226,43 +223,28 @@ export default {
       contactInfo: "",
       isEdit: false,
       reportData: {
-        overViewData: {
-          power: 200,
-          powerRadio: 10,
-          period: 160,
-          originPower: 2000,
-          originPowerFrom: 1000,
-          originPowerTo: 3000,
-          enegyPower: 1800,
-          enegyPowerFrom: 3000,
-          enegyPowerTo: 4800,
-          originTimeFrom: '2021.08.08 06:30:10',
-          originTimeTo: '2021.08.10 06:30:20',
-          enegyTimeFrom: '2021.08.11 06:30:10',
-          enegyTimeTo: '2021.08.13 06:30:10',
-        },
-        weatherChartData: {
-          chartData: [],
-          settingValue: 1,
-          calcValue: 0.2
-        },
-        temperatureChartData: {
-          chartData: [],
-          settingValue: 1,
-          calcValue: 0.2
-        },
-        humidityChartData: {
-          chartData: [],
-          settingValue: 1,
-          calcValue: 0.2
-        },
-      }
+        allSave: 200,
+        saveRate: 10,
+        timeLength: 160,
+        originSave: 2000,
+        originBegin: 1000,
+        originFinish: 3000,
+        powerSave: 1800,
+        powerBegin: 3000,
+        powerFinish: 4800,
+        originStart: '2021.08.08 06:30:10',
+        originEnd: '2021.08.10 06:30:20',
+        powerStart: '2021.08.11 06:30:10',
+        powerEnd: '2021.08.13 06:30:10'
+      },
+      deviceId: ''
     });
 
     const baseForm = ref(null);
     const installForm = ref(null);
     const router = useRouter(),
       route = useRoute();
+    state.deviceId = route.query.id;
     onMounted(() => {
       state.proviceData = regionData.map(x => {
         return {
@@ -270,10 +252,9 @@ export default {
           label: x.label
         };
       });
-      const deviceId = route.query.id;
-      if (deviceId) {
+      if (state.deviceId) {
         state.isEdit = true;
-        getDeviceDetails(deviceId)
+        getDeviceDetails(state.deviceId)
           .then(res => {
             if (res.code == 0) {
               const {
@@ -284,7 +265,8 @@ export default {
                 insAddress,
                 customerName,
                 computerID,
-                controlCode
+                controlCode,
+                report
               } = res.data;
               const cityData = regionData.find(x => x.label == insProvice);
               state.cityData = (cityData && cityData.children) || [];
@@ -298,10 +280,16 @@ export default {
                 computerID,
                 controlCode
               };
-              state.endDevice = res.data.endDevice || [
+              state.reportData = report || {}
+              state.endDevice = res.data.endDevices.map(x => {
+                x.floor = Number(x.floor);
+                return x;
+              }) || [
                 {
+                  meterNum: "",
                   deviceName: "",
-                  floor: "",
+                  type: null,
+                  floor: 0,
                   roomNo: ""
                 }
               ];
@@ -344,7 +332,7 @@ export default {
       if (type === "add") {
         state.endDevice.push({
           deviceName: "",
-          floor: "",
+          floor: 0,
           roomNo: ""
         });
       } else if (type === "del") {
@@ -355,8 +343,6 @@ export default {
     const saveDevice = async () => {
       let validAll = true;
       let inValidType;
-      const instTime1 = new Date(state.baseFormData.instTime).toISOString();
-      console.log(instTime1);
       // 校验到有没有填写的内容，重定位
       baseForm.value.validate(valid => {
         if (!valid) {
@@ -459,11 +445,11 @@ export default {
   .install-info {
     width: 1000px;
   }
-  .report-info {
+  .contact-info {
     max-width: 900px;
   }
-  .contact-info {
-    max-width: 800px;
+  .report-info {
+    max-width: 900px;
   }
   .title {
     margin: 20px 0;

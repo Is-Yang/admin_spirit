@@ -1,6 +1,6 @@
 <template>
   <div class="report-info">
-    <TopOverview :data="data.overViewData"></TopOverview>
+    <TopOverview :data="data"></TopOverview>
     <CompareChart :data="weatherChartData" :setting="weatherChartOption" @clickOrigin="weatherOriginClick(true)"></CompareChart>
     <CompareChart :data="temperatureChartData" :setting="temperatureChartOption" @clickOrigin="temperatureOriginClick(true)"></CompareChart>
     <CompareChart :data="humidityChartData" :setting="humidityChartOption" @clickOrigin="temperatureOriginClick(true)">></CompareChart>
@@ -8,17 +8,19 @@
       <el-button type="primary" @click="exportReport">生成节点报告</el-button>
     </div>
     <WeatherDialog v-if="weatherVisble" @closeDialog="weatherOriginClick(false)"></WeatherDialog>
-    <TemperatureDialog v-if="temperatureVisble" @closeDialog="temperatureOriginClick(false)"></TemperatureDialog>
+    <!-- <TemperatureDialog v-if="temperatureVisble" @closeDialog="temperatureOriginClick(false)"></TemperatureDialog> -->
+    <HumidityDialog v-if="temperatureVisble" :endDevice="endDevice" @closeDialog="temperatureOriginClick(false)"></HumidityDialog>
   </div>
 </template>
 
 <script>
 import { onMounted, reactive, ref, toRefs } from "vue";
-import { getWeathCompare, getTempAndhum} from "/@/api/admin";
+import { getWeathCompare, getTempAndhum, getReportFile} from "/@/api/admin";
 import TopOverview from './TopOverview.vue'
 import CompareChart from './CompareChart.vue'
 import WeatherDialog from './WeatherDialog.vue'
 import TemperatureDialog from './TemperatureDialog.vue'
+import HumidityDialog from './HumidityDialog.vue'
 import { useRouter, useRoute } from "vue-router";
 
 export default {
@@ -27,22 +29,24 @@ export default {
     data: {
       type: Option,
       defalut: {
-        overViewData: {
-          power: 200,
-          powerRadio: 10,
-          period: 160,
-          originPower: 2000,
-          originPowerFrom: 1000,
-          originPowerTo: 3000,
-          enegyPower: 1800,
-          enegyPowerFrom: 3000,
-          enegyPowerTo: 4800,
-          originTimeFrom: '2021.08.08 06:30:10',
-          originTimeTo: '2021.08.10 06:30:20',
-          enegyTimeFrom: '2021.08.11 06:30:10',
-          enegyTimeTo: '2021.08.13 06:30:10',
-        }
+        allSave: 200,
+        saveRate: 10,
+        timeLength: 160,
+        originSave: 2000,
+        originBegin: 1000,
+        originFinish: 3000,
+        powerSave: 1800,
+        powerBegin: 3000,
+        powerFinish: 4800,
+        originStart: '2021.08.08 06:30:10',
+        originEnd: '2021.08.10 06:30:20',
+        powerStart: '2021.08.11 06:30:10',
+        powerEnd: '2021.08.13 06:30:10'
       }
+    },
+    endDevice: {
+      type: Array,
+      defalut: []
     }
   },
   components: {
@@ -50,6 +54,7 @@ export default {
     CompareChart,
     WeatherDialog,
     TemperatureDialog,
+    HumidityDialog,
   },
   setup(props) {
     const state = reactive({
@@ -129,7 +134,27 @@ export default {
     
     // 导出节电报告
     const exportReport = () => {
-      
+      const params = {
+        ...props.data,
+        deviceNo: route.query.id
+      };
+      getReportFile(params)
+        .then(res => {
+          if (res) {
+            let blob = new Blob([res]);
+            let downloadElement = document.createElement("a");
+            let href = window.URL.createObjectURL(blob);
+            downloadElement.href = href;
+            downloadElement.download = "节点报告.csv";
+            document.body.appendChild(downloadElement);
+            downloadElement.click();
+            document.body.removeChild(downloadElement);
+            window.URL.revokeObjectURL(href);
+          }
+        })
+        .catch(err => {
+          ElMessage.info("导出失败!");
+        });
     }
     // 天气点击原始数据查看详情
     const weatherOriginClick = (type) => {

@@ -33,7 +33,7 @@ const lineOption = {
             type: 'dotted'
         },
         symbol: 'none'
-    },{
+    }, {
         name: '节能模式',
         data: [50, 130, 254, 118, 55, 247, 80],
         type: 'line',
@@ -69,17 +69,14 @@ const lineBarOption = {
         top: '15%',
         bottom: '10%'
     },
-    xAxis: [
-        {
-            type: 'category',
-            data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-            axisPointer: {
-                type: 'shadow'
-            }
+    xAxis: [{
+        type: 'category',
+        data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+        axisPointer: {
+            type: 'shadow'
         }
-    ],
-    yAxis: [
-        {
+    }],
+    yAxis: [{
             type: 'value',
             name: '温度',
             min: 0,
@@ -100,8 +97,7 @@ const lineBarOption = {
             }
         },
     ],
-    series: [
-        {
+    series: [{
             color: '#fad686',
             name: '温度',
             type: 'line',
@@ -119,7 +115,7 @@ const lineBarOption = {
     ]
 };
 
-const getLineOption = (data=[], originKey='originTemp', powerKey='powerTemp') => {
+const getLineOption = (data = [], originKey = 'originTemp', powerKey = 'powerTemp') => {
     return {
         color: ['#d9001b', '#70b603'],
         legend: {
@@ -140,7 +136,7 @@ const getLineOption = (data=[], originKey='originTemp', powerKey='powerTemp') =>
         xAxis: {
             type: 'category',
             // data: ['1天', '2天', '3天', '4天', '5天', '6天'],
-            data: data.length? data.map(x=>x.day+'天') : ['1天', '2天', '3天', '4天', '5天', '6天'],
+            data: Array.isArray(data) && data.map(x => x.day + '天'),
             axisTick: {
                 show: false
             }
@@ -151,16 +147,16 @@ const getLineOption = (data=[], originKey='originTemp', powerKey='powerTemp') =>
         series: [{
             name: '原始模式',
             // data: [150, 230, 224, 218, 135, 147, 260],
-            data: data.length? data.map(x=>x[originKey]) : [150, 230, 224, 218, 135, 147, 260],
+            data: Array.isArray(data) && data.map(x => x[originKey]),
             type: 'line',
             lineStyle: {
                 type: 'dotted'
             },
             symbol: 'none'
-        },{
+        }, {
             name: '节能模式',
             data: [50, 130, 254, 118, 55, 247, 80],
-            data: data.length? data.map(x=>x[powerKey]) : [50, 130, 254, 118, 55, 247, 80],
+            data: Array.isArray(data) && data.map(x => x[powerKey]),
             type: 'line',
             lineStyle: {
                 type: 'dotted'
@@ -195,17 +191,14 @@ const getLineBarOption = (data, title) => {
             top: '15%',
             bottom: '18%'
         },
-        xAxis: [
-            {
-                type: 'category',
-                data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-                axisPointer: {
-                    type: 'shadow'
-                }
+        xAxis: [{
+            type: 'category',
+            data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+            axisPointer: {
+                type: 'shadow'
             }
-        ],
-        yAxis: [
-            {
+        }],
+        yAxis: [{
                 type: 'value',
                 name: '温度',
                 min: 0,
@@ -226,8 +219,7 @@ const getLineBarOption = (data, title) => {
                 }
             },
         ],
-        series: [
-            {
+        series: [{
                 color: '#fad686',
                 name: '温度',
                 type: 'line',
@@ -241,7 +233,7 @@ const getLineBarOption = (data, title) => {
                 yAxisIndex: 1,
                 data: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3]
             },
-    
+
         ]
     };
 }

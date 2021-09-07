@@ -12,17 +12,19 @@
       :data="tableData1"
       :max-height="300"
       style="width: 100%">
-      <el-table-column prop="value" label="气温值"></el-table-column>
-      <el-table-column prop="hightValue" label="最高气温"></el-table-column>
-      <el-table-column prop="lowValue" label="最低气温"></el-table-column>
-      <el-table-column prop="averageValue" label="平均气温"></el-table-column>
+      <el-table-column prop="day" label="日期"></el-table-column>
+      <el-table-column prop="maxTemperature" label="最高气温"></el-table-column>
+      <el-table-column prop="minTemperature" label="最低气温"></el-table-column>
+      <el-table-column prop="temperature" label="平均气温"></el-table-column>
+      <el-table-column prop="weather" label="天气"></el-table-column>
     </el-table>
     <div class="title mt20">节电模式测试天气温度平均值：</div>
     <el-table :data="tableData2" :max-height="300" style="width: 100%">
-      <el-table-column prop="value" label="气温值"></el-table-column>
-      <el-table-column prop="hightValue" label="最高气温"></el-table-column>
-      <el-table-column prop="lowValue" label="最低气温"></el-table-column>
-      <el-table-column prop="averageValue" label="平均气温"></el-table-column>
+      <el-table-column prop="day" label="日期"></el-table-column>
+      <el-table-column prop="maxTemperature" label="最高气温"></el-table-column>
+      <el-table-column prop="minTemperature" label="最低气温"></el-table-column>
+      <el-table-column prop="temperature" label="平均气温"></el-table-column>
+      <el-table-column prop="weather" label="天气"></el-table-column>
     </el-table>
     <template #footer>
       <div class="dialog-footer">
@@ -51,23 +53,7 @@ export default {
     const state = reactive({
         visible: false,
         tableData1: [],
-        tableData2: [],
-        column: [{
-            label: '气温值',
-            prop: 'value'
-        },
-        {
-            label: '最高气温',
-            prop: 'hightValue'
-        },
-        {
-            label: '最低气温',
-            prop: 'lowValue'
-        },
-        {
-            label: '平均气温',
-            prop: 'averageValue'
-        }]
+        tableData2: []
     })
 
     const route = useRoute();
@@ -78,8 +64,9 @@ export default {
           .then(res => {
             console.log(res,'getWeathDetails');
             if (res.code == 0) {
-              // state.tableData1 = res.data;
-              // state.tableData2 = res.data;
+              state.tableData1 = res.data.originList;
+              state.tableData2 = res.data.powerList;
+              state.visible = true;
             }
           })
           .catch(err => {
@@ -88,31 +75,6 @@ export default {
               type: "error"
             });
           });
-
-      const list = [{
-          value: 8.8,
-          hightValue: 8.8,
-          lowValue: 8.8,
-          averageValue: 8.8,
-        },{
-          value: 8.8,
-          hightValue: 8.8,
-          lowValue: 8.8,
-          averageValue: 8.8,
-        },{
-          value: 8.8,
-          hightValue: 8.8,
-          lowValue: 8.8,
-          averageValue: 8.8,
-        },{
-          value: 8.8,
-          hightValue: 8.8,
-          lowValue: 8.8,
-          averageValue: 8.8,
-        }]
-      state.tableData1 = list
-      state.tableData2 = list
-      state.visible = true;
     }
     const closeDialog = () => {
       emit('closeDialog')

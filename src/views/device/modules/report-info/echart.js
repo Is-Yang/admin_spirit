@@ -119,7 +119,7 @@ const lineBarOption = {
     ]
 };
 
-const getLineOption = (data) => {
+const getLineOption = (data=[], originKey='originTemp', powerKey='powerTemp') => {
     return {
         color: ['#d9001b', '#70b603'],
         legend: {
@@ -139,7 +139,8 @@ const getLineOption = (data) => {
         },
         xAxis: {
             type: 'category',
-            data: ['1天', '2天', '3天', '4天', '5天', '6天'],
+            // data: ['1天', '2天', '3天', '4天', '5天', '6天'],
+            data: data.length? data.map(x=>x.day+'天') : ['1天', '2天', '3天', '4天', '5天', '6天'],
             axisTick: {
                 show: false
             }
@@ -149,7 +150,8 @@ const getLineOption = (data) => {
         },
         series: [{
             name: '原始模式',
-            data: [150, 230, 224, 218, 135, 147, 260],
+            // data: [150, 230, 224, 218, 135, 147, 260],
+            data: data.length? data.map(x=>x[originKey]) : [150, 230, 224, 218, 135, 147, 260],
             type: 'line',
             lineStyle: {
                 type: 'dotted'
@@ -158,6 +160,7 @@ const getLineOption = (data) => {
         },{
             name: '节能模式',
             data: [50, 130, 254, 118, 55, 247, 80],
+            data: data.length? data.map(x=>x[powerKey]) : [50, 130, 254, 118, 55, 247, 80],
             type: 'line',
             lineStyle: {
                 type: 'dotted'

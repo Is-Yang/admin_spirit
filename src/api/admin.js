@@ -25,11 +25,19 @@ export function getDeviceList(params) {
   return request.postAjax('/admin/search/devices', params, true)
 }
 
+// 导出
 export function getExportFile(params) {
   return request.postAjax('/admin/export/devices', params, true)
 }
 
-// 反馈列表
-export function getFeedback(params) {
-  return request.postAjax('/admin/search/feedback', params, true)
+export function getWeathCompare(params) {
+  return request.getAjax(`/admin/weath/compare/${params}`)
+}
+
+export function getWeathDetails(params) {
+  return request.getAjax(`/admin/weather/${params}`)
+}
+
+export function getTempAndhum(params) {
+  return request.getAjax(`/admin/tempre/all/${params}`)
 }

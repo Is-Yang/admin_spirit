@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { getCurrentInstance, onMounted, reactive, ref, toRefs } from "vue";
+import { getCurrentInstance, onMounted, reactive, ref, toRefs, watch } from "vue";
 import echartOption from './echart.js';
 export default {
   name: 'DeviceDialog',
@@ -26,7 +26,9 @@ export default {
       defalut: {
         chartData: [],
         settingValue: 1,
-        calcValue: 0.2
+        calcValue: 0.2,
+        originKey: 'originTemp',
+        powerKey: 'powerTemp'
       }
     },
     setting: {
@@ -46,6 +48,14 @@ export default {
     })
     const myCharts = ref(null);
 
+    watch(
+      () => props.data.chartData,
+      (data, prevData) => {
+        // 绘制图表
+        const option = echartOption.getLineOption(data, props.originKey, props.powerKey);
+        myCharts.value.setOption(option)
+      }
+    )
     const viewOriginData = () => {
       context.emit("clickOrigin")
     }
@@ -74,7 +84,7 @@ export default {
 .compare-chart {
   .chart-title {
     margin: 20px 0;
-    font-weight: bold;
+    // font-weight: bold;
     .text-btn {
       float: right;
     }

@@ -1,11 +1,11 @@
 <template>
   <div class="report-info">
     <TopOverview :data="data.overViewData"></TopOverview>
-    <CompareChart :data="data.weatherChartData" :setting="weatherChartOption" @clickOrigin="weatherOriginClick(true)"></CompareChart>
-    <CompareChart :data="data.temperatureChartData" :setting="temperatureChartOption" @clickOrigin="temperatureOriginClick(true)"></CompareChart>
-    <CompareChart :data="data.humidityChartData" :setting="humidityChartOption" @clickOrigin="temperatureOriginClick(true)">></CompareChart>
+    <CompareChart :data="weatherChartData" :setting="weatherChartOption" @clickOrigin="weatherOriginClick(true)"></CompareChart>
+    <CompareChart :data="temperatureChartData" :setting="temperatureChartOption" @clickOrigin="temperatureOriginClick(true)"></CompareChart>
+    <CompareChart :data="humidityChartData" :setting="humidityChartOption" @clickOrigin="temperatureOriginClick(true)">></CompareChart>
     <div class="export-btn">
-      <el-button type="primary" size="small" @click="exportReport">生成节点报告</el-button>
+      <el-button type="primary" @click="exportReport">生成节点报告</el-button>
     </div>
     <WeatherDialog v-if="weatherVisble" @closeDialog="weatherOriginClick(false)"></WeatherDialog>
     <TemperatureDialog v-if="temperatureVisble" @closeDialog="temperatureOriginClick(false)"></TemperatureDialog>
@@ -14,11 +14,12 @@
 
 <script>
 import { onMounted, reactive, ref, toRefs } from "vue";
-import * as Http from '/@/api/admin'
+import { getWeathCompare, getTempAndhum} from "/@/api/admin";
 import TopOverview from './TopOverview.vue'
 import CompareChart from './CompareChart.vue'
 import WeatherDialog from './WeatherDialog.vue'
 import TemperatureDialog from './TemperatureDialog.vue'
+import { useRouter, useRoute } from "vue-router";
 
 export default {
   name: 'DeviceDialog',
@@ -40,22 +41,7 @@ export default {
           originTimeTo: '2021.08.10 06:30:20',
           enegyTimeFrom: '2021.08.11 06:30:10',
           enegyTimeTo: '2021.08.13 06:30:10',
-        },
-        weatherChartData: {
-          chartData: [],
-          settingValue: 1,
-          calcValue: 0.2
-        },
-        temperatureChartData: {
-          chartData: [],
-          settingValue: 1,
-          calcValue: 0.2
-        },
-        humidityChartData: {
-          chartData: [],
-          settingValue: 1,
-          calcValue: 0.2
-        },
+        }
       }
     }
   },
@@ -86,6 +72,59 @@ export default {
       temperatureVisble: false,
       humidityVisble: false,
 
+      weatherChartData: {
+        chartData: [],
+        settingValue: 1,
+        calcValue: 0.2,
+        originKey: 'originTemp',
+        powerKey: 'powerTemp'
+      },
+      temperatureChartData: {
+        chartData: [],
+        settingValue: 1,
+        calcValue: 0.2,
+        originKey: 'originTemp',
+        powerKey: 'powerTemp'
+      },
+      humidityChartData: {
+        chartData: [],
+        settingValue: 1,
+        calcValue: 0.2,
+        originKey: 'originHumi',
+        powerKey: 'powerHumi'
+      },
+    })
+    const route = useRoute();
+
+    onMounted(()=>{
+        const deviceId = route.query.id;
+        deviceId && getWeathCompare(deviceId)
+          .then(res => {
+            console.log(res,'getWeathCompare');
+            if (res.code == 0) {
+              state.weatherChartData.chartData = res.data;
+            }
+          })
+          .catch(err => {
+            ElMessage.error({
+              message: err,
+              type: "error"
+            });
+          });
+        deviceId && getTempAndhum(deviceId)
+          .then(res => {
+            console.log(res,'getTempAndhum');
+            if (res.code == 0) {
+              state.temperatureChartData.chartData = res.data;
+              state.humidityChartData.chartData = res.data;
+            }
+          })
+          .catch(err => {
+            ElMessage.error({
+              message: err,
+              type: "error"
+            });
+          });
     })
     
     // 导出节电报告

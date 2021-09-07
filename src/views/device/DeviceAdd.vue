@@ -462,6 +462,9 @@ export default {
   .report-info {
     max-width: 900px;
   }
+  .contact-info {
+    max-width: 800px;
+  }
   .title {
     margin: 20px 0;
     font-weight: bold;

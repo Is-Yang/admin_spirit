@@ -33,8 +33,9 @@
 </template>
 
 <script>
-import { onMounted, reactive, ref, toRefs } from 'vue'
-import * as Http from '/@/api/admin'
+import { onMounted, reactive, ref, toRefs } from 'vue';
+import { getWeathDetails } from "/@/api/admin";
+import { useRouter, useRoute } from "vue-router";
 import VerticalTable from './VerticalTable.vue';
 
 export default {
@@ -69,13 +70,25 @@ export default {
         }]
     })
 
+    const route = useRoute();
     // 获取序列号
     const getData = () => {
-      // Http.getWeatherOriginData().then(res => {
-      //   if (res.code == 0) {
-      //     state.tableData = res.data;
-      //   }
-      // })
+        const deviceId = route.query.id;
+        deviceId && getWeathDetails(deviceId)
+          .then(res => {
+            console.log(res,'getWeathDetails');
+            if (res.code == 0) {
+              // state.tableData1 = res.data;
+              // state.tableData2 = res.data;
+            }
+          })
+          .catch(err => {
+            ElMessage.error({
+              message: err,
+              type: "error"
+            });
+          });
+
       const list = [{
           value: 8.8,
           hightValue: 8.8,

@@ -181,6 +181,9 @@ export default {
         }, {
           value: 2,
           label: '温湿度采集'
+        }, {
+          value: 3,
+          label: '空调测试'
         }
       ],
       baseFormRules: {
@@ -392,7 +395,6 @@ export default {
       };
 
       state.loading = true;
-
       addDevice(params)
         .then(res => {
           state.loading = false;

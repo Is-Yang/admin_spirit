@@ -311,6 +311,13 @@ export default {
         });
     };
 
+    const handleReset = () => {
+      state.queryParams = {};
+      state.currentPage = 1;
+      state.pageSize = 10;
+      queryData();
+    }
+
     return {
       ...toRefs(state),
       handleAdd,
@@ -320,6 +327,7 @@ export default {
       getCompany,
       operation,
       querySearchData,
+      handleReset,
       changeProvice,
       exportFil,
       addressChange

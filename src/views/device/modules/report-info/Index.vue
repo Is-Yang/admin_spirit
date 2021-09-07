@@ -93,7 +93,7 @@ export default {
       
     }
     // 天气点击原始数据查看详情
-    const weatherOriginClick = (type) => {debugger
+    const weatherOriginClick = (type) => {
         state.weatherVisble = type;
     }
     // 温度点击原始数据查看详情

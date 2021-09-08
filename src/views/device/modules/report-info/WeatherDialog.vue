@@ -39,6 +39,7 @@ import { onMounted, reactive, ref, toRefs } from 'vue';
 import { getWeathDetails } from "/@/api/admin";
 import { useRouter, useRoute } from "vue-router";
 import VerticalTable from './VerticalTable.vue';
+import { ElMessage } from "element-plus";
 
 export default {
   name: 'weatherDialog',

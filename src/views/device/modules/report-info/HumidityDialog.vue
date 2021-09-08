@@ -7,12 +7,12 @@
     @close="closeDialog"
   >
     <!-- <VerticalTable :tableHead="column" :tableData="tableData" ></VerticalTable> -->
-    <div class="title">原始模式测试天气湿度平均值：</div>
+    <div class="title">原始模式测试天气{{type === 'hum'?'湿度': '温度'}}平均值：</div>
     <div class="top mt20">
       <!-- <OriginTable v-for="item in endDevice" :key="item.meterNum" meterNum="3774S5J34WTC7MPA"/> -->
       <OriginTable v-for="(item,index) in endDevice" :title="'设备'+index" :key="item.meterNum" :meterNum="item.meterNum" model="1"/>
     </div>
-    <div class="title mt20">节电模式测试天气湿度平均值：</div>
+    <div class="title mt20">节电模式测试天气{{type === 'hum'?'湿度': '温度'}}平均值：</div>
     <div class="bottom mt20">
       <OriginTable v-for="(item,index) in endDevice" :title="'设备'+index" :key="item.meterNum" :meterNum="item.meterNum" model="2"/>
     </div>
@@ -33,7 +33,7 @@ export default {
   name: 'weathDialog',
   props: {
     endDevice:[],
-    // dialogType: 'hum'
+    type: ''
   },
   components: {
     OriginTable

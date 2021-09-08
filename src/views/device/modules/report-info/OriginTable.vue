@@ -15,6 +15,7 @@
 import { onMounted, reactive, ref, toRefs } from 'vue'
 import { getTempAndHumDetails } from '/@/api/admin'
 import { useRouter, useRoute } from "vue-router";
+import { ElMessage } from "element-plus";
 
 export default {
   name: 'weathDialog',

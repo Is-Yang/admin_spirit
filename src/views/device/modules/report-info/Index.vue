@@ -2,14 +2,14 @@
   <div class="report-info">
     <TopOverview :data="data"></TopOverview>
     <CompareChart :data="weatherChartData" :setting="weatherChartOption" @clickOrigin="weatherOriginClick(true)"></CompareChart>
-    <CompareChart :data="temperatureChartData" :setting="temperatureChartOption" @clickOrigin="temperatureOriginClick(true)"></CompareChart>
-    <CompareChart :data="humidityChartData" :setting="humidityChartOption" @clickOrigin="temperatureOriginClick(true)">></CompareChart>
+    <CompareChart :data="temperatureChartData" :setting="temperatureChartOption" @clickOrigin="temperatureOriginClick(true, 'temp')"></CompareChart>
+    <CompareChart :data="humidityChartData" :setting="humidityChartOption" @clickOrigin="temperatureOriginClick(true, 'hum')">></CompareChart>
     <div class="export-btn">
       <el-button type="primary" @click="exportReport">生成节点报告</el-button>
     </div>
     <WeatherDialog v-if="weatherVisble" @closeDialog="weatherOriginClick(false)"></WeatherDialog>
     <!-- <TemperatureDialog v-if="temperatureVisble" @closeDialog="temperatureOriginClick(false)"></TemperatureDialog> -->
-    <HumidityDialog v-if="temperatureVisble" :endDevice="endDevice" @closeDialog="temperatureOriginClick(false)"></HumidityDialog>
+    <HumidityDialog v-if="temperatureVisble" :type="detailType" :endDevice="endDevice" @closeDialog="temperatureOriginClick(false)"></HumidityDialog>
   </div>
 </template>
 
@@ -22,6 +22,7 @@ import WeatherDialog from './WeatherDialog.vue'
 import TemperatureDialog from './TemperatureDialog.vue'
 import HumidityDialog from './HumidityDialog.vue'
 import { useRouter, useRoute } from "vue-router";
+import { ElMessage } from "element-plus";
 
 export default {
   name: 'DeviceDialog',
@@ -58,6 +59,7 @@ export default {
   },
   setup(props) {
     const state = reactive({
+      detailType: 'hum',
       weatherChartOption: {
         title: '原始模式/节点模式天气对比',
         settingLabel: '天气气温偏差值设置:',
@@ -141,19 +143,11 @@ export default {
       getReportFile(params)
         .then(res => {
           if (res) {
-            let blob = new Blob([res]);
-            let downloadElement = document.createElement("a");
-            let href = window.URL.createObjectURL(blob);
-            downloadElement.href = href;
-            downloadElement.download = "节点报告.csv";
-            document.body.appendChild(downloadElement);
-            downloadElement.click();
-            document.body.removeChild(downloadElement);
-            window.URL.revokeObjectURL(href);
+            ElMessage.success('生成节点报告成功!')
           }
         })
         .catch(err => {
-          ElMessage.info("导出失败!");
+          ElMessage.info("生成节点报告失败!");
         });
     }
     // 天气点击原始数据查看详情
@@ -161,8 +155,9 @@ export default {
         state.weatherVisble = type;
     }
     // 温度点击原始数据查看详情
-    const temperatureOriginClick = (type) => {debugger
+    const temperatureOriginClick = (type, detailType) => {
         state.temperatureVisble = type;
+        if (detailType) state.detailType = detailType;
     }
     // 湿度点击原始数据查看详情
     const humidityOriginClick = (type) => {

@@ -4,7 +4,11 @@
       <el-button-group>
         <el-button :type="activeType == 1 ? 'primary' : ''" @click="changeType(1)">基本信息</el-button>
         <el-button :type="activeType == 2 ? 'primary' : ''" @click="changeType(2)">末端设备安装信息</el-button>
-        <el-button v-if="deviceId" :type="activeType == 3 ? 'primary' : ''" @click="changeType(3)" >节点测试报告信息</el-button>
+        <el-button
+          v-if="deviceId"
+          :type="activeType == 3 ? 'primary' : ''"
+          @click="changeType(3)"
+        >节点测试报告信息</el-button>
         <el-button :type="activeType == 4 ? 'primary' : ''" @click="changeType(4)">紧急联系人信息</el-button>
       </el-button-group>
 
@@ -34,9 +38,9 @@
 
           <el-row :gutter="10">
             <el-col :span="8">
-              <el-form-item label="安装地址" prop="insProvice" label-width="120px">
+              <el-form-item label="安装地址" prop="insProviceCode" label-width="120px">
                 <el-select
-                  v-model="baseFormData.insProvice"
+                  v-model="baseFormData.insProviceCode"
                   placeholder="请选择省"
                   @change="changeProvice"
                 >
@@ -50,8 +54,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label prop="insCountry" label-width="0">
-                <el-select v-model="baseFormData.insCountry" placeholder="请选择市">
+              <el-form-item label prop="insCountryCode" label-width="0">
+                <el-select v-model="baseFormData.insCountryCode" placeholder="请选择市">
                   <el-option
                     v-for="cItem in cityData"
                     :key="cItem.value"
@@ -129,7 +133,7 @@
         <div class="overview">
           <ReportInfo :data="reportData" :endDevice="endDevice"></ReportInfo>
         </div>
-      <el-divider v-if="deviceId"></el-divider>
+        <el-divider v-if="deviceId"></el-divider>
       </div>
       <div class="info-wrap contact-info">
         <div class="title" id="contact-info">紧急联系人信息</div>
@@ -145,7 +149,7 @@ import regionData from "/@/components/ProvincesCascader/region.json";
 import { addDevice, getDeviceNo, getDeviceDetails } from "/@/api/admin";
 import { useRouter, useRoute } from "vue-router";
 import dayjs from "dayjs";
-import ReportInfo from './modules/report-info/Index.vue'
+import ReportInfo from "./modules/report-info/Index.vue";
 
 const linkIdMap = {
   1: "#base-info",
@@ -167,7 +171,9 @@ export default {
         deviceNo: "", // 设备序列号
         instTime: "", // 安装时间
         insProvice: "",
+        insProviceCode: "",
         insCountry: "",
+        insCountryCode: "",
         insAddress: "",
         customerName: "", // 公司名称
         computerID: "", // 电脑id
@@ -177,17 +183,18 @@ export default {
       typeOptions: [
         {
           value: 1,
-          label: '电量采集'
-        }, {
+          label: "电量采集"
+        },
+        {
           value: 2,
-          label: '温湿度采集'
+          label: "温湿度采集"
         }
       ],
       baseFormRules: {
-        insProvice: [
+        insProviceCode: [
           { required: true, message: "请选择省", trigger: "change" }
         ],
-        insCountry: [
+        insCountryCode: [
           { required: true, message: "请选择市", trigger: "change" }
         ],
         insAddress: [
@@ -232,12 +239,12 @@ export default {
         powerSave: 1800,
         powerBegin: 3000,
         powerFinish: 4800,
-        originStart: '2021.08.08 06:30:10',
-        originEnd: '2021.08.10 06:30:20',
-        powerStart: '2021.08.11 06:30:10',
-        powerEnd: '2021.08.13 06:30:10'
+        originStart: "2021.08.08 06:30:10",
+        originEnd: "2021.08.10 06:30:20",
+        powerStart: "2021.08.11 06:30:10",
+        powerEnd: "2021.08.13 06:30:10"
       },
-      deviceId: ''
+      deviceId: ""
     });
 
     const baseForm = ref(null);
@@ -261,7 +268,7 @@ export default {
                 deviceNo,
                 instTime,
                 insProvice,
-                insCountry,
+                insCountryCode,
                 insAddress,
                 customerName,
                 computerID,
@@ -269,18 +276,19 @@ export default {
                 report
               } = res.data;
               const cityData = regionData.find(x => x.label == insProvice);
+              // TODO: 
               state.cityData = (cityData && cityData.children) || [];
               state.baseFormData = {
                 deviceNo,
                 instTime: dayjs(instTime).valueOf(),
                 insProvice,
-                insCountry,
+                insCountryCode,
                 insAddress,
                 customerName,
                 computerID,
                 controlCode
               };
-              state.reportData = report || {}
+              state.reportData = report || {};
               state.endDevice = res.data.endDevices.map(x => {
                 x.floor = Number(x.floor);
                 return x;
@@ -323,7 +331,7 @@ export default {
     };
 
     const changeProvice = val => {
-      state.baseFormData.insCountry = "";
+      state.baseFormData.insCountryCode = "";
       const cityData = regionData.find(x => x.value == val);
       state.cityData = (cityData && cityData.children) || [];
     };
@@ -374,6 +382,12 @@ export default {
       const params = {
         ...state.baseFormData,
         instTime,
+        insProvice: state.proviceData.find(
+          ele => ele.value === state.baseFormData.insProviceCode
+        ).label,
+        insCountry: state.cityData.find(
+          ele => ele.value === state.baseFormData.insCountryCode
+        ).label,
         endDevice: state.endDevice.map(x => {
           x.floor = String(x.floor);
           return x;

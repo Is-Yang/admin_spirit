@@ -113,7 +113,7 @@
             size="small"
             @click.prevent="operation(scope.row)"
           >{{scope.row.status === 1 ? '注销' : '激活'}}</el-button>
-          <el-button type="text" size="small" @click="handleAdd(scope.row)">查看详情</el-button>
+          <el-button type="text" size="small" @click="handleAdd(scope.row)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>

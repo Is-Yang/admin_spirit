@@ -55,7 +55,8 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label prop="insCountryCode" label-width="0">
-                <el-select v-model="baseFormData.insCountryCode" placeholder="请选择市">
+                <el-select v-model="baseFormData.insCountryCode" placeholder="请选择市"
+                  @change="changeCountry">
                   <el-option
                     v-for="cItem in cityData"
                     :key="cItem.value"
@@ -137,7 +138,7 @@
       </div>
       <div class="info-wrap contact-info">
         <div class="title" id="contact-info">紧急联系人信息</div>
-        <el-input type="textarea" v-model="contactInfo"></el-input>
+        <el-input type="textarea" v-model="remark"></el-input>
       </div>
     </div>
   </div>
@@ -146,7 +147,7 @@
 import { onMounted, reactive, ref, toRefs, computed } from "vue";
 import { ElMessage } from "element-plus";
 import regionData from "/@/components/ProvincesCascader/region.json";
-import { addDevice, getDeviceNo, getDeviceDetails } from "/@/api/admin";
+import { addDevice, updateDevice, getDeviceNo, getDeviceDetails } from "/@/api/admin";
 import { useRouter, useRoute } from "vue-router";
 import dayjs from "dayjs";
 import ReportInfo from "./modules/report-info/Index.vue";
@@ -170,8 +171,9 @@ export default {
       baseFormData: {
         deviceNo: "", // 设备序列号
         instTime: "", // 安装时间
+        insProviceCode: 0,
         insProvice: "",
-        insProviceCode: "",
+        insCountryCode: 0,
         insCountry: "",
         insCountryCode: "",
         insAddress: "",
@@ -227,7 +229,7 @@ export default {
         }
       ],
       floorData: [-3, -2, -1, 0, 1, 2, 3, 4, 5],
-      contactInfo: "",
+      remark: "",
       isEdit: false,
       reportData: {
         allSave: 200,
@@ -267,12 +269,15 @@ export default {
               const {
                 deviceNo,
                 instTime,
+                insProviceCode,
+                insCountryCode,
                 insProvice,
                 insCountryCode,
                 insAddress,
                 customerName,
                 computerID,
                 controlCode,
+                deviceID,
                 report
               } = res.data;
               const cityData = regionData.find(x => x.label == insProvice);
@@ -281,12 +286,15 @@ export default {
               state.baseFormData = {
                 deviceNo,
                 instTime: dayjs(instTime).valueOf(),
+                insProviceCode,
+                insCountryCode,
                 insProvice,
                 insCountryCode,
                 insAddress,
                 customerName,
                 computerID,
-                controlCode
+                controlCode,
+                deviceID
               };
               state.reportData = report || {};
               state.endDevice = res.data.endDevices.map(x => {
@@ -334,7 +342,12 @@ export default {
       state.baseFormData.insCountryCode = "";
       const cityData = regionData.find(x => x.value == val);
       state.cityData = (cityData && cityData.children) || [];
+      state.baseFormData.insProvice = cityData.label;
     };
+    const changeCountry = val => {
+      const countryInfo = state.cityData.find(x => x.value == val);
+      state.baseFormData.insCountry = countryInfo.label;
+    }
 
     const editInstall = (type, idx) => {
       if (type === "add") {
@@ -377,7 +390,6 @@ export default {
       }
 
       const instTime = new Date(state.baseFormData.instTime).toISOString();
-
       //   请求接口
       const params = {
         ...state.baseFormData,
@@ -395,8 +407,22 @@ export default {
       };
 
       state.loading = true;
-      addDevice(params)
-        .then(res => {
+      if (state.deviceId) {
+        updateDevice(params).then(res => {
+          state.loading = false;
+          if (res.code == 0) {
+            ElMessage.success({
+              message: "修改成功",
+              type: "success"
+            });
+            router.push({ path: "/device" });
+          }
+        }).catch(err => {
+          state.loading = false;
+          console.log(err);
+        });
+      } else {
+        addDevice(params).then(res => {
           state.loading = false;
           if (res.code == 0) {
             ElMessage.success({
@@ -405,11 +431,12 @@ export default {
             });
             router.push({ path: "/device" });
           }
-        })
-        .catch(err => {
+        }).catch(err => {
           state.loading = false;
           console.log(err);
         });
+      }
+
     };
     const goBack = () => {
       router.go(-1);
@@ -422,6 +449,7 @@ export default {
       changeType,
       editInstall,
       changeProvice,
+      changeCountry,
       saveDevice,
       goBack
     };

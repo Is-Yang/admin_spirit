@@ -43,19 +43,6 @@ http.interceptors.response.use(
     return response.data;
   },
   error => {
-    if (error.response) {
-      switch (error.response.status) {
-        case 401:
-          // 401 清除token信息并跳转到登录页面
-          ElMessageBox.confirm('登录已失效，需重新登录', '提示', { 
-            type: 'warning',
-            confirmButtonText: '确定',
-          }).then(() => {
-            localStorage.removeItem('token');
-            router.push('/login');
-          });
-      }
-    }
     return Promise.reject(error.response.data);
   }
 );

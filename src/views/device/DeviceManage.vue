@@ -315,7 +315,7 @@ export default {
       };
       Http.getExportFile(params)
         .then(res => {
-          if (res) {
+          if (res.code == 0) {
             let blob = new Blob([res]);
             let downloadElement = document.createElement("a");
             let href = window.URL.createObjectURL(blob);

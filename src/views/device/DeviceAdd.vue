@@ -105,7 +105,7 @@
               <el-col :span="4">
                 <el-input v-model="item.deviceName" placeholder="请填写设备名称"></el-input>
               </el-col>
-              <el-col :span="3">
+              <el-col :span="4">
                 <el-select v-model="item.type" placeholder="请选择设备类型" style="width: 100%;">
                   <el-option
                     v-for="item in typeOptions"
@@ -175,7 +175,6 @@ export default {
         insProvice: "",
         insCountryCode: 0,
         insCountry: "",
-        insCountryCode: "",
         insAddress: "",
         customerName: "", // 公司名称
         computerID: "", // 电脑id
@@ -190,6 +189,10 @@ export default {
         {
           value: 2,
           label: "温湿度采集"
+        },
+        {
+          value: 3,
+          label: "空调测试设备"
         }
       ],
       baseFormRules: {
@@ -272,7 +275,7 @@ export default {
                 insProviceCode,
                 insCountryCode,
                 insProvice,
-                insCountryCode,
+                insCountry,
                 insAddress,
                 customerName,
                 computerID,
@@ -290,7 +293,7 @@ export default {
                 insProviceCode,
                 insCountryCode,
                 insProvice,
-                insCountryCode,
+                insCountry,
                 insAddress,
                 customerName,
                 computerID,

@@ -142,7 +142,7 @@ export default {
       };
       getReportFile(params)
         .then(res => {
-          if (res) {
+          if (res.code == 0) {
             ElMessage.success('生成节点报告成功!')
           }
         })

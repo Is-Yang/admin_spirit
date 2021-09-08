@@ -1,27 +1,33 @@
 <template>
-  <div id="app">
-    <el-container v-if="state.showMenu" class="layout">
-      <Header />
-      <el-main class="main-wrapper" :style="{ 'height': state.minHeight + 'px' }">
-        <div class="main-content">
-         <router-view />
-        </div>
-      </el-main>
-    </el-container>
-    <template v-else>
-      <router-view />
-    </template>
-  </div>
+  <el-config-provider :locale="locale">
+    <div id="app">
+      <el-container v-if="state.showMenu" class="layout">
+        <Header />
+        <el-main class="main-wrapper" :style="{ 'height': state.minHeight + 'px' }">
+          <div class="main-content">
+          <router-view />
+          </div>
+        </el-main>
+      </el-container>
+      <template v-else>
+        <router-view />
+      </template>
+    </div>
+  </el-config-provider>
 </template>
 
 <script>
-import { onUnmounted, onMounted, reactive } from 'vue'
+import { onUnmounted, onMounted, reactive, defineComponent } from 'vue'
 import Header from '/@/components/Header.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { localGet } from '/@/utils'
+import { ElConfigProvider } from 'element-plus'
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
+
 export default {
   name: 'App',
   components: {
+    ElConfigProvider,
     Header
   },
   setup() {
@@ -69,7 +75,8 @@ export default {
     })
 
     return {
-      state
+      state,
+      locale: zhCn,
     }
   }
 }

@@ -272,7 +272,8 @@ export default {
                 computerID,
                 controlCode,
                 deviceID,
-                report
+                report,
+                remark
               } = res.data;
               const cityData = regionData.find(x => x.label == insProvice);
               state.cityData = (cityData && cityData.children) || [];
@@ -289,7 +290,8 @@ export default {
                 controlCode,
                 deviceID
               };
-              state.reportData = report || {}
+              state.reportData = report || {};
+              state.remark = remark || '';
               state.endDevice = res.data.endDevices.map(x => {
                 x.floor = Number(x.floor);
                 return x;

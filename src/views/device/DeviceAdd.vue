@@ -34,9 +34,9 @@
 
           <el-row :gutter="10">
             <el-col :span="8">
-              <el-form-item label="安装地址" prop="insProvice" label-width="120px">
+              <el-form-item label="安装地址" prop="insProviceCode" label-width="120px">
                 <el-select
-                  v-model="baseFormData.insProvice"
+                  v-model="baseFormData.insProviceCode"
                   placeholder="请选择省"
                   @change="changeProvice"
                 >
@@ -50,8 +50,9 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label prop="insCountry" label-width="0">
-                <el-select v-model="baseFormData.insCountry" placeholder="请选择市">
+              <el-form-item label prop="insCountryCode" label-width="0">
+                <el-select v-model="baseFormData.insCountryCode" placeholder="请选择市"
+                  @change="changeCountry">
                   <el-option
                     v-for="cItem in cityData"
                     :key="cItem.value"
@@ -133,7 +134,7 @@
       </div>
       <div class="info-wrap contact-info">
         <div class="title" id="contact-info">紧急联系人信息</div>
-        <el-input type="textarea" v-model="contactInfo"></el-input>
+        <el-input type="textarea" v-model="remark"></el-input>
       </div>
     </div>
   </div>
@@ -142,7 +143,7 @@
 import { onMounted, reactive, ref, toRefs, computed } from "vue";
 import { ElMessage } from "element-plus";
 import regionData from "/@/components/ProvincesCascader/region.json";
-import { addDevice, getDeviceNo, getDeviceDetails } from "/@/api/admin";
+import { addDevice, updateDevice, getDeviceNo, getDeviceDetails } from "/@/api/admin";
 import { useRouter, useRoute } from "vue-router";
 import dayjs from "dayjs";
 import ReportInfo from './modules/report-info/Index.vue'
@@ -166,7 +167,9 @@ export default {
       baseFormData: {
         deviceNo: "", // 设备序列号
         instTime: "", // 安装时间
+        insProviceCode: 0,
         insProvice: "",
+        insCountryCode: 0,
         insCountry: "",
         insAddress: "",
         customerName: "", // 公司名称
@@ -184,10 +187,10 @@ export default {
         }
       ],
       baseFormRules: {
-        insProvice: [
+        insProviceCode: [
           { required: true, message: "请选择省", trigger: "change" }
         ],
-        insCountry: [
+        insCountryCode: [
           { required: true, message: "请选择市", trigger: "change" }
         ],
         insAddress: [
@@ -220,7 +223,7 @@ export default {
         }
       ],
       floorData: [-3, -2, -1, 0, 1, 2, 3, 4, 5],
-      contactInfo: "",
+      remark: "",
       isEdit: false,
       reportData: {
         allSave: 200,
@@ -260,12 +263,15 @@ export default {
               const {
                 deviceNo,
                 instTime,
+                insProviceCode,
+                insCountryCode,
                 insProvice,
                 insCountry,
                 insAddress,
                 customerName,
                 computerID,
                 controlCode,
+                deviceID,
                 report
               } = res.data;
               const cityData = regionData.find(x => x.label == insProvice);
@@ -273,12 +279,15 @@ export default {
               state.baseFormData = {
                 deviceNo,
                 instTime: dayjs(instTime).valueOf(),
+                insProviceCode,
+                insCountryCode,
                 insProvice,
                 insCountry,
                 insAddress,
                 customerName,
                 computerID,
-                controlCode
+                controlCode,
+                deviceID
               };
               state.reportData = report || {}
               state.endDevice = res.data.endDevices.map(x => {
@@ -323,10 +332,15 @@ export default {
     };
 
     const changeProvice = val => {
-      state.baseFormData.insCountry = "";
+      state.baseFormData.insCountryCode = "";
       const cityData = regionData.find(x => x.value == val);
       state.cityData = (cityData && cityData.children) || [];
+      state.baseFormData.insProvice = cityData.label;
     };
+    const changeCountry = val => {
+      const countryInfo = state.cityData.find(x => x.value == val);
+      state.baseFormData.insCountry = countryInfo.label;
+    }
 
     const editInstall = (type, idx) => {
       if (type === "add") {
@@ -369,11 +383,11 @@ export default {
       }
 
       const instTime = new Date(state.baseFormData.instTime).toISOString();
-
       //   请求接口
       const params = {
         ...state.baseFormData,
         instTime,
+        remark: state.remark,
         endDevice: state.endDevice.map(x => {
           x.floor = String(x.floor);
           return x;
@@ -381,8 +395,22 @@ export default {
       };
 
       state.loading = true;
-      addDevice(params)
-        .then(res => {
+      if (state.deviceId) {
+        updateDevice(params).then(res => {
+          state.loading = false;
+          if (res.code == 0) {
+            ElMessage.success({
+              message: "修改成功",
+              type: "success"
+            });
+            router.push({ path: "/device" });
+          }
+        }).catch(err => {
+          state.loading = false;
+          console.log(err);
+        });
+      } else {
+        addDevice(params).then(res => {
           state.loading = false;
           if (res.code == 0) {
             ElMessage.success({
@@ -391,11 +419,12 @@ export default {
             });
             router.push({ path: "/device" });
           }
-        })
-        .catch(err => {
+        }).catch(err => {
           state.loading = false;
           console.log(err);
         });
+      }
+
     };
     const goBack = () => {
       router.go(-1);
@@ -408,6 +437,7 @@ export default {
       changeType,
       editInstall,
       changeProvice,
+      changeCountry,
       saveDevice,
       goBack
     };

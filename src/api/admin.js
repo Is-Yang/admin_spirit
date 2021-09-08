@@ -54,3 +54,7 @@ export function getTempAndhum(params) {
 export function getReportFile(params) {
   return request.postAjax('/admin/report', params, true)
 }
+
+export function updateDevice(params) {
+  return request.postAjax('/admin/device/upgrade', params, true)
+}

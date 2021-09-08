@@ -4,7 +4,11 @@
       <el-button-group>
         <el-button :type="activeType == 1 ? 'primary' : ''" @click="changeType(1)">基本信息</el-button>
         <el-button :type="activeType == 2 ? 'primary' : ''" @click="changeType(2)">末端设备安装信息</el-button>
-        <el-button v-if="deviceId" :type="activeType == 3 ? 'primary' : ''" @click="changeType(3)" >节点测试报告信息</el-button>
+        <el-button
+          v-if="deviceId"
+          :type="activeType == 3 ? 'primary' : ''"
+          @click="changeType(3)"
+        >节点测试报告信息</el-button>
         <el-button :type="activeType == 4 ? 'primary' : ''" @click="changeType(4)">紧急联系人信息</el-button>
       </el-button-group>
 
@@ -130,7 +134,7 @@
         <div class="overview">
           <ReportInfo :data="reportData" :endDevice="endDevice"></ReportInfo>
         </div>
-      <el-divider v-if="deviceId"></el-divider>
+        <el-divider v-if="deviceId"></el-divider>
       </div>
       <div class="info-wrap contact-info">
         <div class="title" id="contact-info">紧急联系人信息</div>
@@ -146,7 +150,7 @@ import regionData from "/@/components/ProvincesCascader/region.json";
 import { addDevice, updateDevice, getDeviceNo, getDeviceDetails } from "/@/api/admin";
 import { useRouter, useRoute } from "vue-router";
 import dayjs from "dayjs";
-import ReportInfo from './modules/report-info/Index.vue'
+import ReportInfo from "./modules/report-info/Index.vue";
 
 const linkIdMap = {
   1: "#base-info",
@@ -171,6 +175,7 @@ export default {
         insProvice: "",
         insCountryCode: 0,
         insCountry: "",
+        insCountryCode: "",
         insAddress: "",
         customerName: "", // 公司名称
         computerID: "", // 电脑id
@@ -180,10 +185,11 @@ export default {
       typeOptions: [
         {
           value: 1,
-          label: '电量采集'
-        }, {
+          label: "电量采集"
+        },
+        {
           value: 2,
-          label: '温湿度采集'
+          label: "温湿度采集"
         }
       ],
       baseFormRules: {
@@ -235,12 +241,12 @@ export default {
         powerSave: 1800,
         powerBegin: 3000,
         powerFinish: 4800,
-        originStart: '2021.08.08 06:30:10',
-        originEnd: '2021.08.10 06:30:20',
-        powerStart: '2021.08.11 06:30:10',
-        powerEnd: '2021.08.13 06:30:10'
+        originStart: "2021.08.08 06:30:10",
+        originEnd: "2021.08.10 06:30:20",
+        powerStart: "2021.08.11 06:30:10",
+        powerEnd: "2021.08.13 06:30:10"
       },
-      deviceId: ''
+      deviceId: ""
     });
 
     const baseForm = ref(null);
@@ -266,7 +272,7 @@ export default {
                 insProviceCode,
                 insCountryCode,
                 insProvice,
-                insCountry,
+                insCountryCode,
                 insAddress,
                 customerName,
                 computerID,
@@ -276,6 +282,7 @@ export default {
                 remark
               } = res.data;
               const cityData = regionData.find(x => x.label == insProvice);
+              // TODO: 
               state.cityData = (cityData && cityData.children) || [];
               state.baseFormData = {
                 deviceNo,
@@ -283,7 +290,7 @@ export default {
                 insProviceCode,
                 insCountryCode,
                 insProvice,
-                insCountry,
+                insCountryCode,
                 insAddress,
                 customerName,
                 computerID,
@@ -389,7 +396,12 @@ export default {
       const params = {
         ...state.baseFormData,
         instTime,
-        remark: state.remark,
+        insProvice: state.proviceData.find(
+          ele => ele.value === state.baseFormData.insProviceCode
+        ).label,
+        insCountry: state.cityData.find(
+          ele => ele.value === state.baseFormData.insCountryCode
+        ).label,
         endDevice: state.endDevice.map(x => {
           x.floor = String(x.floor);
           return x;

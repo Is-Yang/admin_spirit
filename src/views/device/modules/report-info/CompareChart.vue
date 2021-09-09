@@ -52,7 +52,7 @@ export default {
       () => props.data.chartData,
       (data, prevData) => {
         // 绘制图表
-        const option = echartOption.getLineOption(data, props.originKey, props.powerKey);
+        const option = echartOption.getLineOption(data, props.data.originKey, props.data.powerKey);
         myCharts.value.setOption(option)
       }
     )

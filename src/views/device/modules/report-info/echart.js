@@ -152,16 +152,16 @@ const getLineOption = (data = [], originKey = 'originTemp', powerKey = 'powerTem
             lineStyle: {
                 type: 'dotted'
             },
-            symbol: 'none'
+            symbol: 'circle'
         }, {
             name: '节能模式',
-            data: [50, 130, 254, 118, 55, 247, 80],
+            // data: [50, 130, 254, 118, 55, 247, 80],
             data: Array.isArray(data) && data.map(x => x[powerKey]),
             type: 'line',
             lineStyle: {
                 type: 'dotted'
             },
-            symbol: 'none'
+            symbol: 'circle'
         }]
     };
 }

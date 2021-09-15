@@ -176,13 +176,19 @@ export default {
       return item.insProvice + item.insCountry + item.insAddress;
     };
 
+    const changePage = (val) => {
+      state.currentPage = val;
+      queryData();
+    }
+
     return {
       ...toRefs(state),
       queryData,
       formatDay,
       getCompany,
       querySearchData,
-      changeProvice
+      changeProvice,
+      changePage
     };
   }
 };

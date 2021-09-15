@@ -85,14 +85,14 @@
     >
       <!-- <el-table-column type="selection" width="55"></el-table-column> -->
       <el-table-column prop="deviceNo" label="设备序列号" with="150"></el-table-column>
-      <el-table-column prop="ValidTime" label="有效期">
+      <!-- <el-table-column prop="ValidTime" label="有效期">
         <template #default="scope">
           <span>{{formatDay(scope.row.ValidTime) }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column prop="orderStatus" label="状态" width="100">
         <template #default="scope">
-          <span>{{scope.row.status === 1 ? '有效' : '无效'}}</span>
+          <span>{{scope.row.status === 1 ? '已激活' : '未激活'}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="instTime" label="安装时间">
@@ -339,6 +339,11 @@ export default {
       queryData();
     };
 
+    const changePage = (val) => {
+      state.currentPage = val;
+      queryData();
+    }
+
     return {
       ...toRefs(state),
       handleAdd,
@@ -350,7 +355,8 @@ export default {
       querySearchData,
       handleReset,
       changeProvice,
-      exportFil
+      exportFil,
+      changePage
     };
   }
 };

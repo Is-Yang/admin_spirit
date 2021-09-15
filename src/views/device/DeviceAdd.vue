@@ -171,9 +171,9 @@ export default {
       baseFormData: {
         deviceNo: "", // 设备序列号
         instTime: "", // 安装时间
-        insProviceCode: 0,
+        insProviceCode: null,
         insProvice: "",
-        insCountryCode: 0,
+        insCountryCode: null,
         insCountry: "",
         insAddress: "",
         customerName: "", // 公司名称
@@ -398,6 +398,7 @@ export default {
       //   请求接口
       const params = {
         ...state.baseFormData,
+        remark: state.remark,
         instTime,
         insProvice: state.proviceData.find(
           ele => ele.value === state.baseFormData.insProviceCode

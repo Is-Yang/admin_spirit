@@ -94,6 +94,7 @@ export default {
   .tag-group {
     .tag-item {
       margin: 0 20px 20px 0;
+      cursor: pointer;
     }
   }
   .el-dialog__body {

@@ -1,36 +1,33 @@
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+
 const path = require("path");
 
-const target = 'https://xcx.yulue.net' // 后端 测试接口的地址.
+function resolve (dir) {
+  return path.join(__dirname, '.', dir)
+}
 
-module.exports = {
-  alias: {
-    '/@/': path.resolve(__dirname, 'src')
+export default defineConfig({
+  base: './',
+  resolve: {
+    alias: {
+      '/@': resolve('src')
+    }
   },
-  /**
-   * 在生产中服务时的基本公共路径。
-   * @default '/'
-   */
-  base: "./",
-  /**
-   * 与“根”相关的目录，构建输出将放在其中。如果目录存在，它将在构建之前被删除。
-   * @default 'dist'
-   */
-  outDir: "dist",
-  port: 3000,
-  // 是否自动在浏览器打开
-  open: false,
-  // 是否开启 https
-  https: false,
-  // 服务端渲染
-  ssr: false,
-  // 引入第三方的配置
+  build: {
+    outDir: 'dist',
+  },
+  server: {
+    open: false,
+    proxy: {
+      '/api/v1': {
+        target: 'https://xcx.yulue.net',
+        changeOrigin: true
+      }
+    }
+  },
   optimizeDeps: {
     include: ["axios"],
   },
-  proxy: {
-    '/api/v1': {
-      target: target,
-      changeOrigin: true
-    }
-  },
-};
+  plugins: [vue()],
+})

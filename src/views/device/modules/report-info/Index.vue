@@ -109,7 +109,7 @@ export default {
           .then(res => {
             console.log(res,'getWeathCompare');
             if (res.code == 0) {
-              state.weatherChartData.chartData = res.data;
+              state.weatherChartData.chartData = res.data || [];
             }
           })
           .catch(err => {
@@ -122,8 +122,8 @@ export default {
           .then(res => {
             console.log(res,'getTempAndhum');
             if (res.code == 0) {
-              state.temperatureChartData.chartData = res.data;
-              state.humidityChartData.chartData = res.data;
+              state.temperatureChartData.chartData = res.data || [];
+              state.humidityChartData.chartData = res.data || [];
             }
           })
           .catch(err => {

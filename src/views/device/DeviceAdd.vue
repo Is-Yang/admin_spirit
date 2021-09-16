@@ -55,8 +55,11 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label prop="insCountryCode" label-width="0">
-                <el-select v-model="baseFormData.insCountryCode" placeholder="请选择市"
-                  @change="changeCountry">
+                <el-select
+                  v-model="baseFormData.insCountryCode"
+                  placeholder="请选择市"
+                  @change="changeCountry"
+                >
                   <el-option
                     v-for="cItem in cityData"
                     :key="cItem.value"
@@ -147,7 +150,12 @@
 import { onMounted, reactive, ref, toRefs, computed } from "vue";
 import { ElMessage } from "element-plus";
 import regionData from "/@/components/ProvincesCascader/region.json";
-import { addDevice, updateDevice, getDeviceNo, getDeviceDetails } from "/@/api/admin";
+import {
+  addDevice,
+  updateDevice,
+  getDeviceNo,
+  getDeviceDetails
+} from "/@/api/admin";
 import { useRouter, useRoute } from "vue-router";
 import dayjs from "dayjs";
 import ReportInfo from "./modules/report-info/Index.vue";
@@ -285,7 +293,7 @@ export default {
                 remark
               } = res.data;
               const cityData = regionData.find(x => x.label == insProvice);
-              // TODO: 
+              // TODO:
               state.cityData = (cityData && cityData.children) || [];
               state.baseFormData = {
                 deviceNo,
@@ -301,11 +309,14 @@ export default {
                 deviceID
               };
               state.reportData = report || {};
-              state.remark = remark || '';
-              state.endDevice = res.data.endDevices.map(x => {
-                x.floor = Number(x.floor);
-                return x;
-              }) || [
+              state.remark = remark || "";
+              state.endDevice = (
+                res.data &&
+                res.data.endDevices &&
+                res.data.endDevices.map(x => {
+                  x.floor = Number(x.floor);
+                  return x;
+                })) || [
                 {
                   meterNum: "",
                   deviceName: "",
@@ -352,7 +363,7 @@ export default {
     const changeCountry = val => {
       const countryInfo = state.cityData.find(x => x.value == val);
       state.baseFormData.insCountry = countryInfo.label;
-    }
+    };
 
     const editInstall = (type, idx) => {
       if (type === "add") {
@@ -414,35 +425,38 @@ export default {
 
       state.loading = true;
       if (state.deviceId) {
-        updateDevice(params).then(res => {
-          state.loading = false;
-          if (res.code == 0) {
-            ElMessage.success({
-              message: "修改成功",
-              type: "success"
-            });
-            router.push({ path: "/device" });
-          }
-        }).catch(err => {
-          state.loading = false;
-          console.log(err);
-        });
+        updateDevice(params)
+          .then(res => {
+            state.loading = false;
+            if (res.code == 0) {
+              ElMessage.success({
+                message: "修改成功",
+                type: "success"
+              });
+              router.push({ path: "/device" });
+            }
+          })
+          .catch(err => {
+            state.loading = false;
+            console.log(err);
+          });
       } else {
-        addDevice(params).then(res => {
-          state.loading = false;
-          if (res.code == 0) {
-            ElMessage.success({
-              message: "保存成功",
-              type: "success"
-            });
-            router.push({ path: "/device" });
-          }
-        }).catch(err => {
-          state.loading = false;
-          console.log(err);
-        });
+        addDevice(params)
+          .then(res => {
+            state.loading = false;
+            if (res.code == 0) {
+              ElMessage.success({
+                message: "保存成功",
+                type: "success"
+              });
+              router.push({ path: "/device" });
+            }
+          })
+          .catch(err => {
+            state.loading = false;
+            console.log(err);
+          });
       }
-
     };
     const goBack = () => {
       router.go(-1);

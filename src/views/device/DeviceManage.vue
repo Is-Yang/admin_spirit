@@ -315,17 +315,15 @@ export default {
       };
       Http.getExportFile(params)
         .then(res => {
-          if (res.code == 0) {
-            let blob = new Blob([res]);
-            let downloadElement = document.createElement("a");
-            let href = window.URL.createObjectURL(blob);
-            downloadElement.href = href;
-            downloadElement.download = "设备管理.csv";
-            document.body.appendChild(downloadElement);
-            downloadElement.click();
-            document.body.removeChild(downloadElement);
-            window.URL.revokeObjectURL(href);
-          }
+          let blob = new Blob([res]);
+          let downloadElement = document.createElement("a");
+          let href = window.URL.createObjectURL(blob);
+          downloadElement.href = href;
+          downloadElement.download = "设备管理.csv";
+          document.body.appendChild(downloadElement);
+          downloadElement.click();
+          document.body.removeChild(downloadElement);
+          window.URL.revokeObjectURL(href);
         })
         .catch(err => {
           ElMessage.info("导出失败!");

@@ -26,7 +26,7 @@ http.interceptors.request.use(
 http.interceptors.response.use(
   response => {
     const { code, message} = response.data;
-    if (code == 4200) {
+    if (code && code == 4200) {
       ElMessageBox.confirm('登录已失效，需重新登录', '提示', { 
         type: 'warning',
         confirmButtonText: '确定',
@@ -34,7 +34,7 @@ http.interceptors.response.use(
         localStorage.removeItem('token');
         router.push('/login');
       })
-    } else if (code != 0) {
+    } else if (code && code != 0) {
       ElMessage({
         type: 'error',
         message: message

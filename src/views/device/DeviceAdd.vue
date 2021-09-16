@@ -8,7 +8,7 @@
           v-if="deviceId"
           :type="activeType == 3 ? 'primary' : ''"
           @click="changeType(3)"
-        >节点测试报告信息</el-button>
+        >节电测试报告信息</el-button>
         <el-button :type="activeType == 4 ? 'primary' : ''" @click="changeType(4)">紧急联系人信息</el-button>
       </el-button-group>
 
@@ -133,7 +133,7 @@
       </div>
       <el-divider></el-divider>
       <div class="info-wrap report-info" v-if="deviceId">
-        <div class="title" id="report-info">节点测试报告信息</div>
+        <div class="title" id="report-info">节电测试报告信息</div>
         <div class="overview">
           <ReportInfo :data="reportData" :endDevice="endDevice"></ReportInfo>
         </div>

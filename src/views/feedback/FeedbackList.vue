@@ -181,6 +181,13 @@ export default {
       queryData();
     }
 
+    const handleReset = () => {
+      state.queryParams = {};
+      state.currentPage = 1;
+      state.pageSize = 10;
+      queryData();
+    };
+
     return {
       ...toRefs(state),
       queryData,
@@ -188,7 +195,8 @@ export default {
       getCompany,
       querySearchData,
       changeProvice,
-      changePage
+      changePage,
+      handleReset
     };
   }
 };

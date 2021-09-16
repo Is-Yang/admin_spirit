@@ -5,7 +5,7 @@
     <CompareChart :data="temperatureChartData" :setting="temperatureChartOption" @clickOrigin="temperatureOriginClick(true, 'temp')"></CompareChart>
     <CompareChart :data="humidityChartData" :setting="humidityChartOption" @clickOrigin="temperatureOriginClick(true, 'hum')">></CompareChart>
     <div class="export-btn">
-      <el-button type="primary" @click="exportReport">生成节点报告</el-button>
+      <el-button type="primary" @click="exportReport">生成节电报告</el-button>
     </div>
     <WeatherDialog v-if="weatherVisble" @closeDialog="weatherOriginClick(false)"></WeatherDialog>
     <!-- <TemperatureDialog v-if="temperatureVisble" @closeDialog="temperatureOriginClick(false)"></TemperatureDialog> -->
@@ -61,7 +61,7 @@ export default {
     const state = reactive({
       detailType: 'hum',
       weatherChartOption: {
-        title: '原始模式/节点模式天气对比',
+        title: '原始模式/节电模式天气对比',
         settingLabel: '天气气温偏差值设置:',
         calcLabel: '计算得出偏差值:',
       },
@@ -143,11 +143,11 @@ export default {
       getReportFile(params)
         .then(res => {
           if (res.code == 0) {
-            ElMessage.success('生成节点报告成功!')
+            ElMessage.success('生成节电报告成功!')
           }
         })
         .catch(err => {
-          ElMessage.info("生成节点报告失败!");
+          ElMessage.info("生成节电报告失败!");
         });
     }
     // 天气点击原始数据查看详情

@@ -119,11 +119,14 @@
                 </el-select>
               </el-col>
               <el-col :span="4">
+                <el-input-number v-model="item.magnification" :min="1" :max="100" placeholder="倍率" style="width: 100%"></el-input-number>
+              </el-col>
+              <!-- <el-col :span="4">
                 <el-input-number v-model="item.floor" placeholder="楼层" style="width: 100%"></el-input-number>
-              </el-col>
-              <el-col :span="3">
+              </el-col> -->
+              <!-- <el-col :span="3">
                 <el-input v-model="item.roomNo" placeholder="请填写房号"></el-input>
-              </el-col>
+              </el-col> -->
               <el-col :span="2">
                 <span class="del-text" v-if="index > 0" @click="editInstall('del', index)">删除</span>
               </el-col>
@@ -197,11 +200,11 @@ export default {
         {
           value: 2,
           label: "温湿度采集"
-        },
-        {
-          value: 3,
-          label: "空调测试设备"
         }
+        // {
+        //   value: 3,
+        //   label: "空调测试设备"
+        // }
       ],
       baseFormRules: {
         insProviceCode: [

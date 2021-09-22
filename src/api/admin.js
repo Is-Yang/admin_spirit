@@ -58,3 +58,7 @@ export function getReportFile(params) {
 export function updateDevice(params) {
   return request.postAjax('/admin/device/upgrade', params, true)
 }
+
+export function addDiviation(params) {
+  return request.postAjax('/admin/add/diviation', params, true)
+}

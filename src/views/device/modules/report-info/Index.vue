@@ -1,9 +1,9 @@
 <template>
   <div class="report-info">
     <TopOverview :data="data"></TopOverview>
-    <CompareChart :data="weatherChartData" :setting="weatherChartOption" @clickOrigin="weatherOriginClick(true)"></CompareChart>
-    <CompareChart :data="temperatureChartData" :setting="temperatureChartOption" @clickOrigin="temperatureOriginClick(true, 'temp')"></CompareChart>
-    <CompareChart :data="humidityChartData" :setting="humidityChartOption" @clickOrigin="temperatureOriginClick(true, 'hum')">></CompareChart>
+    <CompareChart :type="1" :data="weatherChartData" :setting="weatherChartOption" @clickOrigin="weatherOriginClick(true)"></CompareChart>
+    <CompareChart :type="2" :data="temperatureChartData" :setting="temperatureChartOption" @clickOrigin="temperatureOriginClick(true, 'temp')"></CompareChart>
+    <CompareChart :type="3" :data="humidityChartData" :setting="humidityChartOption" @clickOrigin="temperatureOriginClick(true, 'hum')">></CompareChart>
     <div class="export-btn">
       <el-button type="primary" @click="exportReport">生成节电报告</el-button>
     </div>
@@ -28,7 +28,7 @@ export default {
   name: 'DeviceDialog',
   props: {
     data: {
-      type: Option,
+      type: Object,
       defalut: {
         allSave: 200,
         saveRate: 10,
@@ -42,7 +42,13 @@ export default {
         originStart: '2021.08.08 06:30:10',
         originEnd: '2021.08.10 06:30:20',
         powerStart: '2021.08.11 06:30:10',
-        powerEnd: '2021.08.13 06:30:10'
+        powerEnd: '2021.08.13 06:30:10',
+        weatherDeviation: 0,
+        weatherRate: 0,
+        tempretureDeviation: 0,
+        tempretureRate: 0,
+        humilityDeviation: 0,
+        humilityRate: 0
       }
     },
     endDevice: {
@@ -81,25 +87,25 @@ export default {
 
       weatherChartData: {
         chartData: [],
-        settingValue: 1,
-        calcValue: 0.2,
+        settingValue: props.data.weatherDeviation || 0,
+        calcValue: props.data.weatherRate || 0,
         originKey: 'originTemp',
         powerKey: 'powerTemp'
       },
       temperatureChartData: {
         chartData: [],
-        settingValue: 1,
-        calcValue: 0.2,
+        settingValue: props.data.tempretureDeviation || 0,
+        calcValue: props.data.tempretureRate || 0,
         originKey: 'originTemp',
         powerKey: 'powerTemp'
       },
       humidityChartData: {
         chartData: [],
-        settingValue: 1,
-        calcValue: 0.2,
+        settingValue: props.data.humilityDeviation || 0,
+        calcValue: props.data.humilityRate || 0,
         originKey: 'originHumi',
         powerKey: 'powerHumi'
-      },
+      }
     })
     const route = useRoute();
 
@@ -136,6 +142,13 @@ export default {
     
     // 导出节电报告
     const exportReport = () => {
+      props.data.weatherDeviation = state.weatherChartData.settingValue && Number(state.weatherChartData.settingValue);
+      props.data.weatherRate = state.weatherChartData.calcValue && Number(state.weatherChartData.calcValue);
+      props.data.tempretureDeviation = state.temperatureChartData.settingValue && Number(state.temperatureChartData.settingValue);
+      props.data.tempretureRate = state.temperatureChartData.calcValue && Number(state.temperatureChartData.calcValue);
+      props.data.humilityDeviation = state.humidityChartData.settingValue && Number(state.humidityChartData.settingValue);
+      props.data.humilityRate = state.humidityChartData.calcValue && Number(state.humidityChartData.calcValue);
+
       const params = {
         ...props.data,
         deviceNo: route.query.id

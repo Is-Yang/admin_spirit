@@ -1,5 +1,5 @@
 <template>
-  <div class="add-device" v-loading="loading">
+  <div class="add-device" v-loading.fullscreen.lock="loading">
     <div class="nav-bar">
       <el-button-group>
         <el-button :type="activeType == 1 ? 'primary' : ''" @click="changeType(1)">基本信息</el-button>
@@ -229,17 +229,13 @@ export default {
       installFormRules: {
         deviceName: [
           { required: true, message: "请选择省", trigger: "change" }
-        ],
-        floor: [{ required: true, message: "请选择市", trigger: "change" }],
-        roomNo: [{ required: true, message: "请选择市", trigger: "change" }]
+        ]
       },
       endDevice: [
         {
           meterNum: "",
           deviceName: "",
-          type: null,
-          floor: 0,
-          roomNo: ""
+          type: null
         }
       ],
       floorData: [-3, -2, -1, 0, 1, 2, 3, 4, 5],
@@ -277,8 +273,10 @@ export default {
       });
       if (state.deviceId) {
         state.isEdit = true;
+        state.loading = true;
         getDeviceDetails(state.deviceId)
           .then(res => {
+            state.loading = false;
             if (res.code == 0) {
               const {
                 deviceNo,
@@ -311,26 +309,25 @@ export default {
                 controlCode,
                 deviceID
               };
+
               state.reportData = report || {};
               state.remark = remark || "";
               state.endDevice = (
                 res.data &&
                 res.data.endDevices &&
                 res.data.endDevices.map(x => {
-                  x.floor = Number(x.floor);
                   return x;
                 })) || [
                 {
                   meterNum: "",
                   deviceName: "",
-                  type: null,
-                  floor: 0,
-                  roomNo: ""
+                  type: null
                 }
               ];
             }
           })
           .catch(err => {
+            state.loading = false;
             ElMessage.error({
               message: err,
               type: "error"
@@ -372,8 +369,6 @@ export default {
       if (type === "add") {
         state.endDevice.push({
           deviceName: "",
-          floor: 0,
-          roomNo: ""
         });
       } else if (type === "del") {
         state.endDevice.splice(idx, 1);
@@ -421,7 +416,6 @@ export default {
           ele => ele.value === state.baseFormData.insCountryCode
         ).label,
         endDevice: state.endDevice.map(x => {
-          x.floor = String(x.floor);
           return x;
         })
       };

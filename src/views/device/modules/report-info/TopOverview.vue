@@ -33,7 +33,7 @@ export default {
   name: 'DeviceDialog',
   props: {
     data: {
-      type: Option,
+      type: Object,
       defalut: {
         allSave: 200,
         saveRate: 10,

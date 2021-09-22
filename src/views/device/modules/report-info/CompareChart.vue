@@ -8,7 +8,7 @@
     <div class="chart-setting">
         <span>{{setting.settingLabel}}</span>
         <el-input type="text" size="small" v-model="data.settingValue" style="width:100px" ></el-input>
-        <el-button type="primary" size="mini" @click="clickCheck" round>确定</el-button>
+        <el-button :loading="loading" type="primary" size="mini" @click="clickCheck" round>确定</el-button>
         <span>{{setting.calcLabel}}</span>
         <el-input type="text" size="small" v-model="data.calcValue" style="width:100px"></el-input>
     </div>
@@ -17,10 +17,20 @@
 
 <script>
 import { getCurrentInstance, onMounted, reactive, ref, toRefs, watch } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import echartOption from './echart.js';
+import {
+  addDiviation
+} from "/@/api/admin";
+
 export default {
   name: 'DeviceDialog',
   props: {
+    // 设备类型
+    type: {
+      type: [String, Number],
+      default: null
+    },
     data: {
       type: Option,
       defalut: {
@@ -44,9 +54,11 @@ export default {
   setup(props, context) {
     const {proxy} = getCurrentInstance();
     const state = reactive({
+      loading: false
       // chartOption: lineOption
     })
     const myCharts = ref(null);
+    const route = useRoute();
 
     watch(
       () => props.data.chartData,
@@ -60,7 +72,21 @@ export default {
       context.emit("clickOrigin")
     }
     const clickCheck = () => {
-
+      const params = {
+        deviceNo: route.query.id,
+        type: props.type,
+        deviation: props.data.settingValue && Number(props.data.settingValue)
+      }
+      state.loading = true;
+      addDiviation(params).then(res => {
+        state.loading = false;
+        if (res.code == 0) {
+          props.data.calcValue = res.data;
+        }
+      }).catch(err => {
+        state.loading = false;
+        console.log(err);
+      });
     }
     onMounted(() => {
       myCharts.value = proxy.$echarts.init(myCharts.value);

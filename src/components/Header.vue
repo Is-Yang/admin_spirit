@@ -64,8 +64,6 @@ export default defineComponent({
       }
     };
 
-    console.log(route.path)
-
     watch(() => route.path, () => {
       let index = route.path.lastIndexOf('/');
       if (index > 0) {

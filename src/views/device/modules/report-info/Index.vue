@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { onMounted, reactive, ref, toRefs } from "vue";
+import { onMounted, reactive, ref, toRefs, nextTick } from "vue";
 import { getWeathCompare, getTempAndhum, getReportFile} from "/@/api/admin";
 import TopOverview from './TopOverview.vue'
 import CompareChart from './CompareChart.vue'
@@ -138,6 +138,15 @@ export default {
               type: "error"
             });
           });
+
+        setTimeout(() => {
+          state.weatherChartData.settingValue = props.data.weatherDeviation;
+          state.weatherChartData.calcValue = props.data.weatherRate;
+          state.temperatureChartData.settingValue = props.data.tempretureDeviation;
+          state.temperatureChartData.calcValue = props.data.tempretureRate;
+          state.humidityChartData.settingValue = props.data.humilityDeviation;
+          state.humidityChartData.calcValue = props.data.humilityRate;
+        }, 1000)
     })
     
     // 导出节电报告

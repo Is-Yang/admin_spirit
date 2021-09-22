@@ -254,7 +254,13 @@ export default {
         originStart: "2021.08.08 06:30:10",
         originEnd: "2021.08.10 06:30:20",
         powerStart: "2021.08.11 06:30:10",
-        powerEnd: "2021.08.13 06:30:10"
+        powerEnd: "2021.08.13 06:30:10",
+        weatherDeviation: 0,
+        weatherRate: 0,
+        tempretureDeviation: 0,
+        tempretureRate: 0,
+        humilityDeviation: 0,
+        humilityRate: 0
       },
       deviceId: ""
     });
@@ -309,7 +315,6 @@ export default {
                 controlCode,
                 deviceID
               };
-
               state.reportData = report || {};
               state.remark = remark || "";
               state.endDevice = (
